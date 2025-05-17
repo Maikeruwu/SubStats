@@ -5,11 +5,11 @@ import com.maikeruwu.substats.model.subsonic.system.LicenseResponse
 import com.maikeruwu.substats.model.subsonic.system.PingResponse
 import retrofit2.http.GET
 
-interface SubsonicSystemService {
+interface SubsonicSystemService : AbstractSubsonicService {
 
     @GET("rest/ping.view")
     suspend fun ping(): SubsonicResponse<PingResponse>
 
     @GET("rest/getLicense.view")
-    suspend fun getLicense(): LicenseResponse
+    suspend fun getLicense(): SubsonicResponse<LicenseResponse>
 }

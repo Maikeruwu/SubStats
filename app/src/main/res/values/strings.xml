@@ -1,7 +1,16 @@
 <resources>
-    <string name="app_name">SubStats</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
+    <string name="app_name" translatable="false">SubStats</string>
+    <string name="title_manage">Manage</string>
+    <string name="title_settings">Settings</string>
     <string name="title_statistics">Statistics</string>
-    <string name="ping">Ping!</string>
+    <string name="ping" translatable="false">Ping!</string>
+    <string name="license">License</string>
+    <string name="base_url">Base URL</string>
+    <string name="api_key">API Key</string>
+    <string name="save">Save</string>
+    <string name="test_connection">Test Connection</string>
+    <string name="settings_saved">Settings saved</string>
+    <string name="settings_test_response">Test Response: %1s</string>
+    <string name="response_failed">Failed</string>
+    <string name="response_error" translatable="false">Error %1d: %2s</string>
 </resources>

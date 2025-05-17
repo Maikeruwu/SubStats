@@ -14,10 +14,16 @@ import javax.crypto.spec.GCMParameterSpec
 
 object SecureStorage {
 
+    enum class Key(val value: String) {
+        API_KEY("api_key"),
+        BASE_URL("base_url")
+    }
+
     private const val ANDROID_KEYSTORE = "AndroidKeyStore"
     private const val KEY_ALIAS = "SubStatsKey"
     private const val TRANSFORMATION = "AES/GCM/NoPadding"
     private const val SECURE_PREFERENCES = "SubStatsSecurePrefs"
+    private const val IV_SUFFIX = "_iv"
 
     private fun getSecretKey(): SecretKey {
         val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
@@ -63,42 +69,29 @@ object SecureStorage {
         return String(cipher.doFinal(decoded), Charsets.UTF_8)
     }
 
-    fun getApiKey(): String? {
+    fun get(key: Key): String? {
         val sharedPreferences =
             SubStatsApplication.appContext.getSharedPreferences(
                 SECURE_PREFERENCES,
                 Context.MODE_PRIVATE
             )
-        val encryptedApiKey = sharedPreferences.getString("api_key", null)
-        return if (encryptedApiKey == null) null else decrypt(encryptedApiKey, "iv")
-    }
-
-    fun setApiKey(apiKey: String) {
-        SubStatsApplication.appContext.getSharedPreferences(
-            SECURE_PREFERENCES,
-            Context.MODE_PRIVATE
-        ).edit {
-            val (encryptedApiKey, iv) = encrypt(apiKey)
-            putString("api_key", encryptedApiKey)
-            putString("iv", iv)
+        val encryptedData = sharedPreferences.getString(key.value, null)
+        return if (encryptedData == null) null else try {
+            decrypt(encryptedData, key.value + IV_SUFFIX)
+        } catch (e: IllegalStateException) {
+            e.printStackTrace()
+            null
         }
     }
 
-    fun getBaseURL(): String? {
-        val sharedPreferences =
-            SubStatsApplication.appContext.getSharedPreferences(
-                SECURE_PREFERENCES,
-                Context.MODE_PRIVATE
-            )
-        return sharedPreferences.getString("base_url", null)
-    }
-
-    fun setBaseURL(baseURL: String) {
+    fun set(key: Key, value: String) {
         SubStatsApplication.appContext.getSharedPreferences(
             SECURE_PREFERENCES,
             Context.MODE_PRIVATE
         ).edit {
-            putString("base_url", baseURL)
+            val (encryptedData, iv) = encrypt(value)
+            putString(key.value, encryptedData)
+            putString(key.value + IV_SUFFIX, iv)
         }
     }
 }

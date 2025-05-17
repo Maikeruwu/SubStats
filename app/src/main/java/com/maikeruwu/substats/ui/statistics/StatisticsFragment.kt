@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.maikeruwu.substats.databinding.FragmentStatisticsBinding
-import com.maikeruwu.substats.service.SecureStorage
 import com.maikeruwu.substats.service.SubsonicApiProvider
 import com.maikeruwu.substats.service.endpoint.SubsonicSystemService
 import kotlinx.coroutines.launch
@@ -38,15 +37,19 @@ class StatisticsFragment : Fragment() {
             textView.text = it
         }
 
-        SecureStorage.setApiKey("KjyPcoGfqW8s")
-        SecureStorage.setBaseURL("https://maikeru.duckdns.org/apps/music/subsonic/")
-
-        val systemService = SubsonicApiProvider.createService(SubsonicSystemService::class.java)
+        val systemService = SubsonicApiProvider.createService(SubsonicSystemService::class)
 
         binding.buttonPing.setOnClickListener {
             lifecycleScope.launch {
-                val res = systemService.ping()
-                textView.text = res.status
+                val res = systemService?.ping()
+                textView.text = res?.status
+            }
+        }
+
+        binding.buttonLicense.setOnClickListener {
+            lifecycleScope.launch {
+                val res = systemService?.getLicense()
+                textView.text = res?.data?.valid.toString()
             }
         }
 

@@ -6,5 +6,6 @@ class SubsonicResponse<T>(
     val type: String,
     val serverVersion: String,
     val openSubsonic: Boolean,
-    val data: T?
+    val data: T?,
+    val error: SubsonicResponseError?
 )

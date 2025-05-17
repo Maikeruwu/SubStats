@@ -1,13 +1,13 @@
-package com.maikeruwu.substats.ui.dashboard
+package com.maikeruwu.substats.ui.manage
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class DashboardViewModel : ViewModel() {
+class ManageViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "This is dashboard Fragment"
+        value = "WIP :("
     }
     val text: LiveData<String> = _text
 }

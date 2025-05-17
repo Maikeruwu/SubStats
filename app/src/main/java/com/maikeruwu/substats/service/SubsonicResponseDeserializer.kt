@@ -29,12 +29,13 @@ class SubsonicResponseDeserializer<T>(
             it.key !in listOf("status", "version", "type", "serverVersion", "openSubsonic")
         }
 
-        val data = if (dataEntry?.key.equals("error")) dataEntry?.value.let {
-            context.deserialize<T>(
+        val data = dataEntry?.value.let { context.deserialize<T>(it, clazz) }
+        val error = dataEntry?.value.let {
+            context.deserialize<SubsonicResponseError>(
                 it,
                 SubsonicResponseError::class.java
             )
-        } else dataEntry?.value.let { context.deserialize<T>(it, clazz) }
+        }
 
         return SubsonicResponse(
             status,
@@ -42,7 +43,8 @@ class SubsonicResponseDeserializer<T>(
             type.orEmpty(),
             serverVersion.orEmpty(),
             openSubsonic == true,
-            data
+            data,
+            error
         )
     }
 }
