@@ -13,4 +13,10 @@
     <string name="settings_test_response">Test Response: %1s</string>
     <string name="response_failed">Failed</string>
     <string name="response_error" translatable="false">Error %1d: %2s</string>
+    <string name="title_most_played_songs">Most Played Songs</string>
+    <string name="title_most_played_artists">Most Played Artists</string>
+    <string name="play_count">Play Count:</string>
+    <string name="last_played">Last Played:</string>
+    <string name="cover_art">Cover Art</string>
+    <string name="progress_text">Loaded %1d Songs…</string>
 </resources>

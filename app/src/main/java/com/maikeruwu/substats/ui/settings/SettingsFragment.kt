@@ -48,7 +48,7 @@ class SettingsFragment : Fragment() {
         val buttonSave = binding.buttonSave
         buttonSave.setOnClickListener {
             saveSettings()
-            settingsViewModel.setStatusText(resources.getString(R.string.settings_saved))
+            settingsViewModel.setStatusText(getString(R.string.settings_saved))
         }
 
         val buttonTest = binding.buttonTest
@@ -57,14 +57,14 @@ class SettingsFragment : Fragment() {
             val systemService = SubsonicApiProvider.createService(SubsonicSystemService::class)
             lifecycleScope.launch {
                 settingsViewModel.setStatusText(
-                    resources.getString(
+                    getString(
                         R.string.settings_test_response,
                         try {
                             val res = systemService?.ping()
 
                             when (res?.status) {
-                                "ok" -> resources.getString(android.R.string.ok)
-                                else -> resources.getString(R.string.response_failed)
+                                "ok" -> getString(android.R.string.ok)
+                                else -> getString(R.string.response_failed)
                             }
                         } catch (e: HttpException) {
                             "${e.code()} ${e.message()}"

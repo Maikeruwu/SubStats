@@ -11,4 +11,10 @@
     <string name="settings_saved">Einstellungen gespeichert</string>
     <string name="settings_test_response">Test Antwort: %1s</string>
     <string name="response_failed">Fehlgeschlagen</string>
+    <string name="title_most_played_songs">Meistgespielte Lieder</string>
+    <string name="title_most_played_artists">Meistgespielte Künstler</string>
+    <string name="play_count">Anzahl der Wiedergaben:</string>
+    <string name="last_played">Zuletzt abgespielt:</string>
+    <string name="cover_art">Titelbild</string>
+    <string name="progress_text">%1d Lieder geladen…</string>
 </resources>

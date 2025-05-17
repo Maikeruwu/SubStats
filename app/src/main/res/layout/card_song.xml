@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="105dp">
+
+    <TextView
+            android:layout_width="200dp"
+            android:id="@+id/name"
+            android:textSize="16sp"
+            android:layout_marginStart="20dp"
+            android:textColor="@color/black"
+            android:layout_marginEnd="20dp"
+            android:maxLines="1"
+            android:layout_marginTop="15dp"
+            android:layout_height="wrap_content" />
+
+    <TextView
+            android:id="@+id/textPlayCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/name"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="20dp"
+            android:gravity="center"
+            android:text="@string/play_count"
+            android:textSize="16sp" />
+
+    <TextView
+            android:id="@+id/valuePlayCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/name"
+            android:layout_toEndOf="@id/textPlayCount"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="10dp"
+            android:gravity="center"
+            android:textSize="16sp" />
+
+    <TextView
+            android:id="@+id/textLastPlayed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textPlayCount"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="20dp"
+            android:gravity="center"
+            android:text="@string/last_played"
+            android:textSize="16sp" />
+
+    <TextView
+            android:id="@+id/valueLastPlayed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/valuePlayCount"
+            android:layout_toEndOf="@id/textLastPlayed"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="10dp"
+            android:gravity="center"
+            android:textSize="16sp" />
+
+    <ImageView
+            android:id="@+id/coverArt"
+            android:layout_width="95dp"
+            android:layout_height="95dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="20dp"
+            android:contentDescription="@string/cover_art" />
+
+    <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+
+</RelativeLayout>

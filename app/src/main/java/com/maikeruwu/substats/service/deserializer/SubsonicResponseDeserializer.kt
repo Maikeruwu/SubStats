@@ -1,10 +1,10 @@
-package com.maikeruwu.substats.service
+package com.maikeruwu.substats.service.deserializer
 
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
-import com.maikeruwu.substats.model.subsonic.SubsonicResponse
-import com.maikeruwu.substats.model.subsonic.SubsonicResponseError
+import com.maikeruwu.substats.model.response.SubsonicResponse
+import com.maikeruwu.substats.model.response.SubsonicResponseError
 import java.lang.reflect.Type
 
 class SubsonicResponseDeserializer<T>(

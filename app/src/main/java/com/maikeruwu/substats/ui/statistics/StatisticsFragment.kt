@@ -4,14 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import com.maikeruwu.substats.R
 import com.maikeruwu.substats.databinding.FragmentStatisticsBinding
-import com.maikeruwu.substats.service.SubsonicApiProvider
-import com.maikeruwu.substats.service.endpoint.SubsonicSystemService
-import kotlinx.coroutines.launch
 
 class StatisticsFragment : Fragment() {
 
@@ -26,31 +23,19 @@ class StatisticsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val statisticsViewModel =
-            ViewModelProvider(this)[StatisticsViewModel::class.java]
-
         _binding = FragmentStatisticsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textStatistics
-        statisticsViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+        val mostPlayedSongs = binding.mostPlayedSongs
+        mostPlayedSongs.textView.text = getString(R.string.title_most_played_songs)
+        mostPlayedSongs.root.setOnClickListener {
+            findNavController().navigate(R.id.navigation_statistics_most_played_songs)
         }
 
-        val systemService = SubsonicApiProvider.createService(SubsonicSystemService::class)
-
-        binding.buttonPing.setOnClickListener {
-            lifecycleScope.launch {
-                val res = systemService?.ping()
-                textView.text = res?.status
-            }
-        }
-
-        binding.buttonLicense.setOnClickListener {
-            lifecycleScope.launch {
-                val res = systemService?.getLicense()
-                textView.text = res?.data?.valid.toString()
-            }
+        val mostPlayedArtists = binding.mostPlayedArtists
+        mostPlayedArtists.textView.text = getString(R.string.title_most_played_artists)
+        mostPlayedArtists.root.setOnClickListener {
+            Toast.makeText(context, "Test 2 clicked", Toast.LENGTH_SHORT).show()
         }
 
         return root

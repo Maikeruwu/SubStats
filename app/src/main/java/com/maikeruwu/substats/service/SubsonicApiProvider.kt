@@ -3,15 +3,20 @@ package com.maikeruwu.substats.service
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import com.maikeruwu.substats.model.subsonic.SubsonicResponse
+import com.maikeruwu.substats.model.response.SubsonicResponse
+import com.maikeruwu.substats.service.deserializer.SafeDateDeserializer
+import com.maikeruwu.substats.service.deserializer.SubsonicResponseDeserializer
 import com.maikeruwu.substats.service.endpoint.AbstractSubsonicService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.LocalDateTime
 import kotlin.reflect.KClass
 
 object SubsonicApiProvider {
+
+    const val REST_SUFFIX = "rest"
 
     private val logging = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
@@ -26,16 +31,17 @@ object SubsonicApiProvider {
         .addInterceptor(auth)
         .build()
 
-    private fun getGson(clazzes: List<Class<*>>): Gson {
+    private fun getGson(classes: List<Class<*>>): Gson {
         val gsonBuilder = GsonBuilder()
-        clazzes.forEach {
+        classes.forEach {
             val typeToken = TypeToken.getParameterized(SubsonicResponse::class.java, it)
             gsonBuilder.registerTypeAdapter(
                 typeToken.type,
                 SubsonicResponseDeserializer(it)
             )
         }
-        return gsonBuilder.create()
+        return gsonBuilder.registerTypeAdapter(LocalDateTime::class.java, SafeDateDeserializer())
+            .create()
     }
 
     fun <T : AbstractSubsonicService> createService(serviceClass: KClass<T>): T? {
@@ -49,12 +55,15 @@ object SubsonicApiProvider {
 
         return try {
             Retrofit.Builder()
-                .baseUrl(SecureStorage.get(SecureStorage.Key.BASE_URL).orEmpty())
+                .baseUrl(
+                    SecureStorage.get(SecureStorage.Key.BASE_URL).orEmpty() + REST_SUFFIX + "/"
+                )
                 .addConverterFactory(GsonConverterFactory.create(getGson(returnTypes)))
                 .client(httpClient)
                 .build()
                 .create(serviceClass.java)
-        } catch (_: IllegalArgumentException) {
+        } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
             null
         }
     }

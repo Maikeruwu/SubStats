@@ -1,15 +1,10 @@
 package com.maikeruwu.substats.service.endpoint
 
-import com.maikeruwu.substats.model.subsonic.SubsonicResponse
-import com.maikeruwu.substats.model.subsonic.system.LicenseResponse
-import com.maikeruwu.substats.model.subsonic.system.PingResponse
+import com.maikeruwu.substats.model.response.EmptyResponse
+import com.maikeruwu.substats.model.response.SubsonicResponse
 import retrofit2.http.GET
 
 interface SubsonicSystemService : AbstractSubsonicService {
-
-    @GET("rest/ping.view")
-    suspend fun ping(): SubsonicResponse<PingResponse>
-
-    @GET("rest/getLicense.view")
-    suspend fun getLicense(): SubsonicResponse<LicenseResponse>
+    @GET("ping.view")
+    suspend fun ping(): SubsonicResponse<EmptyResponse>
 }

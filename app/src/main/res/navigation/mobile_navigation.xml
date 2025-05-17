@@ -6,16 +6,22 @@
         app:startDestination="@+id/navigation_statistics">
 
     <fragment
-            android:id="@+id/navigation_dashboard"
-            android:name="com.maikeruwu.substats.ui.manage.ManageFragment"
-            android:label="@string/title_manage"
-            tools:layout="@layout/fragment_manage" />
-
-    <fragment
             android:id="@+id/navigation_statistics"
             android:name="com.maikeruwu.substats.ui.statistics.StatisticsFragment"
             android:label="@string/title_statistics"
             tools:layout="@layout/fragment_statistics" />
+
+    <fragment
+            android:id="@+id/navigation_statistics_most_played_songs"
+            android:name="com.maikeruwu.substats.ui.statistics.mostPlayedSongs.MostPlayedSongsFragment"
+            android:label="@string/title_most_played_songs"
+            tools:layout="@layout/fragment_statistics_most_played_songs" />
+
+    <fragment
+            android:id="@+id/navigation_manage"
+            android:name="com.maikeruwu.substats.ui.manage.ManageFragment"
+            android:label="@string/title_manage"
+            tools:layout="@layout/fragment_manage" />
 
     <fragment
             android:id="@+id/navigation_settings"

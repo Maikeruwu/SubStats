@@ -1,4 +1,4 @@
-package com.maikeruwu.substats.model.subsonic
+package com.maikeruwu.substats.model.response
 
 data class SubsonicResponseError(
     val code: Int,
