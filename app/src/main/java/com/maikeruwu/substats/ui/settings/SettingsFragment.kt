@@ -10,11 +10,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.maikeruwu.substats.R
 import com.maikeruwu.substats.databinding.FragmentSettingsBinding
+import com.maikeruwu.substats.model.exception.SubsonicException
 import com.maikeruwu.substats.service.SecureStorage
 import com.maikeruwu.substats.service.SubsonicApiProvider
 import com.maikeruwu.substats.service.endpoint.SubsonicSystemService
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import java.net.SocketTimeoutException
 
 class SettingsFragment : Fragment() {
 
@@ -23,6 +26,38 @@ class SettingsFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    private fun getHandler(viewModel: SettingsViewModel): CoroutineExceptionHandler {
+        return CoroutineExceptionHandler { _, exception ->
+            viewModel.setStatusText(
+                when (exception) {
+                    is HttpException -> {
+                        getString(
+                            R.string.response_error,
+                            exception.code(),
+                            exception.message()
+                        )
+                    }
+
+                    is SubsonicException -> {
+                        getString(
+                            R.string.response_error,
+                            exception.code,
+                            exception.message
+                        )
+                    }
+
+                    is SocketTimeoutException -> {
+                        getString(R.string.response_timeout)
+                    }
+
+                    else -> {
+                        getString(R.string.response_failed)
+                    }
+                }
+            )
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -50,38 +85,24 @@ class SettingsFragment : Fragment() {
 
         val buttonSave = binding.buttonSave
         buttonSave.setOnClickListener {
-            saveSettings()
+            saveSettings(settingsViewModel)
             settingsViewModel.setStatusText(getString(R.string.settings_saved))
         }
 
         val buttonTest = binding.buttonTest
         buttonTest.setOnClickListener {
-            saveSettings()
+            saveSettings(settingsViewModel)
             val systemService = SubsonicApiProvider.createService(SubsonicSystemService::class)
-            lifecycleScope.launch {
-                try {
-                    val res = systemService?.ping()
-                    settingsViewModel.setStatusText(
-                        getString(
-                            R.string.settings_test_response, when (res?.status) {
-                                "ok" -> getString(android.R.string.ok)
-                                else -> getString(R.string.response_failed)
-                            }
-                        )
+            lifecycleScope.launch(getHandler(settingsViewModel)) {
+                val res = systemService?.ping()
+                settingsViewModel.setStatusText(
+                    getString(
+                        R.string.settings_test_response, when (res?.status) {
+                            "ok" -> getString(android.R.string.ok)
+                            else -> getString(R.string.response_failed)
+                        }
                     )
-                } catch (e: HttpException) {
-                    settingsViewModel.setStatusText(
-                        getString(
-                            R.string.response_error, e.code(), e.message()
-                        )
-                    )
-                } catch (_: Exception) {
-                    settingsViewModel.setStatusText(
-                        getString(
-                            R.string.response_failed
-                        )
-                    )
-                }
+                )
             }
         }
         return root
@@ -92,11 +113,10 @@ class SettingsFragment : Fragment() {
         _binding = null
     }
 
-    fun saveSettings() {
-        val settingsViewModel = ViewModelProvider(this)[SettingsViewModel::class.java]
-        settingsViewModel.setBaseUrl(binding.editTextBaseUrl.text.toString())
-        settingsViewModel.setApiKey(binding.editTextApiKey.text.toString())
-        SecureStorage.set(SecureStorage.Key.BASE_URL, settingsViewModel.baseUrl.value ?: "")
-        SecureStorage.set(SecureStorage.Key.API_KEY, settingsViewModel.apiKey.value ?: "")
+    private fun saveSettings(viewModel: SettingsViewModel) {
+        viewModel.setBaseUrl(binding.editTextBaseUrl.text.toString())
+        viewModel.setApiKey(binding.editTextApiKey.text.toString())
+        SecureStorage.set(SecureStorage.Key.BASE_URL, viewModel.baseUrl.value ?: "")
+        SecureStorage.set(SecureStorage.Key.API_KEY, viewModel.apiKey.value ?: "")
     }
 }

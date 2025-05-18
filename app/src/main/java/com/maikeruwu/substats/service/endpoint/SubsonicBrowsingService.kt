@@ -2,8 +2,8 @@ package com.maikeruwu.substats.service.endpoint
 
 import com.maikeruwu.substats.model.data.Album
 import com.maikeruwu.substats.model.data.Artist
+import com.maikeruwu.substats.model.response.ArtistsResponse
 import com.maikeruwu.substats.model.response.SubsonicResponse
-import com.maikeruwu.substats.model.response.browsing.ArtistsResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

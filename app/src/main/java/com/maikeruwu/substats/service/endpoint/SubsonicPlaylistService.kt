@@ -1,3 +1,5 @@
 package com.maikeruwu.substats.service.endpoint
 
-interface SubsonicPlaylistService
+interface SubsonicPlaylistService : AbstractSubsonicService {
+    // todo, need this for manage tab
+}

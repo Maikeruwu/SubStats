@@ -1,4 +1,4 @@
-package com.maikeruwu.substats.model.response.browsing
+package com.maikeruwu.substats.model.response
 
 import com.maikeruwu.substats.model.data.Index
 

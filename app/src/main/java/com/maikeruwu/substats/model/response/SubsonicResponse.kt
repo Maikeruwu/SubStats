@@ -1,11 +1,10 @@
 package com.maikeruwu.substats.model.response
 
-class SubsonicResponse<T>(
+data class SubsonicResponse<T>(
     val status: String,
     val version: String,
     val type: String,
     val serverVersion: String,
     val openSubsonic: Boolean,
-    val data: T?,
-    val error: SubsonicResponseError?
+    val data: T?
 )

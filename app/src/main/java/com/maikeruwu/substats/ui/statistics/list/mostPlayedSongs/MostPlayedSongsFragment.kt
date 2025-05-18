@@ -4,29 +4,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.maikeruwu.substats.R
-import com.maikeruwu.substats.databinding.FragmentStatisticsListBinding
+import com.maikeruwu.substats.model.response.SearchResponse
 import com.maikeruwu.substats.model.response.SubsonicResponse
-import com.maikeruwu.substats.model.response.searching.SearchResponse
 import com.maikeruwu.substats.service.SubsonicApiProvider
 import com.maikeruwu.substats.service.endpoint.SubsonicSearchingService
-import com.maikeruwu.substats.ui.statistics.list.observeText
-import com.maikeruwu.substats.ui.statistics.list.showProgressOverlay
+import com.maikeruwu.substats.ui.statistics.list.AbstractListFragment
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
 import java.util.Optional
 
-class MostPlayedSongsFragment : Fragment() {
-
-    private var _binding: FragmentStatisticsListBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
+class MostPlayedSongsFragment : AbstractListFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,19 +24,10 @@ class MostPlayedSongsFragment : Fragment() {
     ): View {
         val mostPlayedSongsViewModel =
             ViewModelProvider(this)[MostPlayedSongsViewModel::class.java]
-
-        _binding = FragmentStatisticsListBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        binding.observeText(viewLifecycleOwner, mostPlayedSongsViewModel)
-        binding.showProgressOverlay(true)
-
-        val recyclerView = binding.recyclerView
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        val root = init(inflater, container, mostPlayedSongsViewModel)
         mostPlayedSongsViewModel.songs.observe(viewLifecycleOwner) {
-            recyclerView.adapter = SongAdapter(it, getString(R.string.never))
+            binding.recyclerView.adapter = SongAdapter(it, getString(R.string.never))
         }
-
 
         var offset = 0
         val limit = 20
@@ -58,40 +38,27 @@ class MostPlayedSongsFragment : Fragment() {
             return root
         }
 
-        lifecycleScope.launch {
-            try {
-                if (mostPlayedSongsViewModel.songs.value.isNullOrEmpty()) {
-                    var response: SubsonicResponse<SearchResponse>? = null
+        val handler = getHandler(
+            mostPlayedSongsViewModel,
+            mostPlayedSongsViewModel.songs.value.isNullOrEmpty()
+        )
 
-                    do {
-                        response = searchingService.search("", 0, 0, 0, 0, limit, offset)
-                        Optional.ofNullable(response)
-                            .filter { it.status == "ok" }
-                            .map { it.data?.song }
-                            .ifPresent {
-                                offset += limit
-                                mostPlayedSongsViewModel.putSongs(it)
-                                binding.showProgressOverlay(false)
-                            }
-                    } while (response.status == "ok" && response.data?.song?.isNotEmpty() == true)
-                }
-            } catch (e: HttpException) {
-                mostPlayedSongsViewModel.setErrorText(
-                    getString(
-                        R.string.response_error,
-                        e.code(),
-                        e.message()
-                    )
-                )
-            } catch (_: Exception) {
-                mostPlayedSongsViewModel.setErrorText(getString(R.string.response_failed))
+        lifecycleScope.launch(handler) {
+            if (mostPlayedSongsViewModel.songs.value.isNullOrEmpty()) {
+                var response: SubsonicResponse<SearchResponse>? = null
+
+                do {
+                    response = searchingService.search("", 0, 0, 0, 0, limit, offset)
+                    Optional.ofNullable(response.data)
+                        .map { it.song }
+                        .ifPresent {
+                            offset += limit
+                            mostPlayedSongsViewModel.putSongs(it)
+                            showProgressOverlay(false)
+                        }
+                } while (response.data?.song?.isNotEmpty() == true)
             }
         }
         return root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

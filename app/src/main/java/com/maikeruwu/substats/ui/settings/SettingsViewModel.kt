@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import com.maikeruwu.substats.service.SecureStorage
 
 class SettingsViewModel : ViewModel() {
-
     private val _baseUrl = MutableLiveData<String>().apply {
         value = SecureStorage.get(SecureStorage.Key.BASE_URL)
     }

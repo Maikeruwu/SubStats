@@ -3,6 +3,7 @@ package com.maikeruwu.substats.service.deserializer
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
+import com.maikeruwu.substats.model.exception.SubsonicException
 import com.maikeruwu.substats.model.response.SubsonicResponse
 import com.maikeruwu.substats.model.response.SubsonicResponseError
 import java.lang.reflect.Type
@@ -24,27 +25,27 @@ class SubsonicResponseDeserializer<T>(
         val serverVersion = root["serverVersion"]?.asString
         val openSubsonic = root["openSubsonic"]?.asBoolean
 
-        // Extrahiere das einzige Kind-Element (z.B. ping, musicFolders, ...)
         val dataEntry = root.entrySet().firstOrNull {
             it.key !in listOf("status", "version", "type", "serverVersion", "openSubsonic")
         }
-
-        val data = dataEntry?.value.let { context.deserialize<T>(it, clazz) }
-        val error = dataEntry?.value.let {
-            context.deserialize<SubsonicResponseError>(
-                it,
-                SubsonicResponseError::class.java
-            )
+        if (dataEntry?.key == "error") {
+            val error = dataEntry.value.let {
+                context.deserialize<SubsonicResponseError>(
+                    it,
+                    SubsonicResponseError::class.java
+                )
+            }
+            throw SubsonicException(error.code, error.message)
         }
 
+        val data = dataEntry?.value.let { context.deserialize<T>(it, clazz) }
         return SubsonicResponse(
             status,
             version,
             type.orEmpty(),
             serverVersion.orEmpty(),
             openSubsonic == true,
-            data,
-            error
+            data
         )
     }
 }

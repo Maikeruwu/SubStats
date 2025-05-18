@@ -1,7 +1,7 @@
 package com.maikeruwu.substats.service.endpoint
 
+import com.maikeruwu.substats.model.response.SearchResponse
 import com.maikeruwu.substats.model.response.SubsonicResponse
-import com.maikeruwu.substats.model.response.searching.SearchResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

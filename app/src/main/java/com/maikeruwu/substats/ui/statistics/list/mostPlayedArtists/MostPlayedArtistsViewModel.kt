@@ -4,10 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.maikeruwu.substats.model.data.Artist
 import com.maikeruwu.substats.model.data.Song
-import com.maikeruwu.substats.ui.statistics.list.ListViewModel
+import com.maikeruwu.substats.ui.statistics.list.AbstractListViewModel
 
-class MostPlayedArtistsViewModel : ListViewModel() {
-
+class MostPlayedArtistsViewModel : AbstractListViewModel() {
     private val _artistSongs = MutableLiveData<Map<Artist, List<Song>>>().apply {
         value = mutableMapOf()
     }
@@ -19,5 +18,4 @@ class MostPlayedArtistsViewModel : ListViewModel() {
         _artistSongs.value = currentMap.toList()
             .sortedByDescending { (_, songs) -> songs.sumOf { song -> song.playCount } }.toMap()
     }
-
 }

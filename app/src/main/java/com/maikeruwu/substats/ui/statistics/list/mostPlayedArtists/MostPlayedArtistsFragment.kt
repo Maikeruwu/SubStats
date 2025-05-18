@@ -4,33 +4,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.maikeruwu.substats.R
-import com.maikeruwu.substats.databinding.FragmentStatisticsListBinding
 import com.maikeruwu.substats.model.data.Artist
 import com.maikeruwu.substats.model.data.Song
 import com.maikeruwu.substats.service.SubsonicApiProvider
 import com.maikeruwu.substats.service.endpoint.SubsonicBrowsingService
-import com.maikeruwu.substats.ui.statistics.list.observeText
-import com.maikeruwu.substats.ui.statistics.list.showProgressOverlay
+import com.maikeruwu.substats.ui.statistics.list.AbstractListFragment
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
 import java.util.Optional
 
-class MostPlayedArtistsFragment : Fragment() {
-
-    private var _binding: FragmentStatisticsListBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
-
+class MostPlayedArtistsFragment : AbstractListFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -38,17 +24,9 @@ class MostPlayedArtistsFragment : Fragment() {
     ): View {
         val mostPlayedArtistsViewModel =
             ViewModelProvider(this)[MostPlayedArtistsViewModel::class.java]
-
-        _binding = FragmentStatisticsListBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        binding.observeText(viewLifecycleOwner, mostPlayedArtistsViewModel)
-        binding.showProgressOverlay(true)
-
-        val recyclerView = binding.recyclerView
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        val root: View = init(inflater, container, mostPlayedArtistsViewModel)
         mostPlayedArtistsViewModel.artistSongs.observe(viewLifecycleOwner) {
-            recyclerView.adapter = ArtistSongsAdapter(it, getString(R.string.never))
+            binding.recyclerView.adapter = ArtistSongsAdapter(it, getString(R.string.never))
         }
 
         val browsingService = SubsonicApiProvider.createService(SubsonicBrowsingService::class)
@@ -59,74 +37,51 @@ class MostPlayedArtistsFragment : Fragment() {
         }
 
         val jobs: MutableList<Job> = mutableListOf()
+        val handler = getHandler(
+            mostPlayedArtistsViewModel,
+            mostPlayedArtistsViewModel.artistSongs.value.isNullOrEmpty(),
+            jobs
+        )
 
-        lifecycleScope.launch {
-            try {
-                if (mostPlayedArtistsViewModel.artistSongs.value.isNullOrEmpty()) {
-                    val artistsResponse = browsingService.getArtists()
+        lifecycleScope.launch(handler) {
+            if (mostPlayedArtistsViewModel.artistSongs.value.isNullOrEmpty()) {
+                val artistsResponse = browsingService.getArtists()
 
-                    Optional.ofNullable(artistsResponse)
-                        .filter { it.status == "ok" }
-                        .map { it.data?.index }
-                        .stream().flatMap { it?.stream() }
-                        .map { it.artist }.flatMap { it?.stream() }
-                        .forEach { artist ->
-                            jobs.add(lifecycleScope.launch {
-                                val innerJobs: MutableList<Job> = mutableListOf()
-                                val toAdd: MutableList<Pair<Artist, List<Song>>> = mutableListOf()
-                                val artistResponse = browsingService.getArtist(artist.id)
+                Optional.ofNullable(artistsResponse.data)
+                    .map { it.index }
+                    .stream().flatMap { it.stream() }
+                    .map { it.artist }.flatMap { it.stream() }
+                    .forEach { artist ->
+                        jobs.add(lifecycleScope.launch(handler) {
+                            val innerJobs: MutableList<Job> = mutableListOf()
+                            val toAdd: MutableList<Pair<Artist, List<Song>>> = mutableListOf()
+                            val artistResponse = browsingService.getArtist(artist.id)
 
-                                Optional.ofNullable(artistResponse)
-                                    .filter { it.status == "ok" }
-                                    .map { it.data?.album }
-                                    .stream().flatMap { it?.stream() }
-                                    .forEach {
-                                        innerJobs.add(lifecycleScope.launch {
-                                            val albumResponse = browsingService.getAlbum(it.id)
+                            Optional.ofNullable(artistResponse.data)
+                                .map { it.album }
+                                .stream().flatMap { it?.stream() }
+                                .forEach {
+                                    innerJobs.add(lifecycleScope.launch(handler) {
+                                        val albumResponse = browsingService.getAlbum(it.id)
 
-                                            Optional.ofNullable(albumResponse)
-                                                .filter { it.status == "ok" }
-                                                .map { it.data?.song }
-                                                .ifPresent {
-                                                    toAdd.add(artist to it)
-                                                }
-                                        })
-                                    }
-                                innerJobs.forEach { it.join() }
-
-                                toAdd.forEach {
-                                    mostPlayedArtistsViewModel.putArtistSongs(it.first, it.second)
+                                        Optional.ofNullable(albumResponse.data)
+                                            .map { it.song }
+                                            .ifPresent {
+                                                toAdd.add(artist to it)
+                                            }
+                                    })
                                 }
-                                binding.showProgressOverlay(false)
-                            })
-                        }
-                    jobs.forEach { it.join() }
-                }
-            } catch (e: HttpException) {
-                jobs.forEach {
-                    it.cancel(e.message.orEmpty(), e)
-                    it.cancelChildren()
-                }
-                mostPlayedArtistsViewModel.setErrorText(
-                    getString(
-                        R.string.response_error,
-                        e.code(),
-                        e.message()
-                    )
-                )
-            } catch (e: Exception) {
-                jobs.forEach {
-                    it.cancel(e.message.orEmpty(), e)
-                    it.cancelChildren()
-                }
-                mostPlayedArtistsViewModel.setErrorText(getString(R.string.response_failed))
+                            innerJobs.forEach { it.join() }
+
+                            toAdd.forEach {
+                                mostPlayedArtistsViewModel.putArtistSongs(it.first, it.second)
+                            }
+                            showProgressOverlay(false)
+                        })
+                    }
+                jobs.forEach { it.join() }
             }
         }
         return root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

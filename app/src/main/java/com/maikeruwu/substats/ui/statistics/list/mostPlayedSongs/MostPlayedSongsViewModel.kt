@@ -3,10 +3,9 @@ package com.maikeruwu.substats.ui.statistics.list.mostPlayedSongs
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.maikeruwu.substats.model.data.Song
-import com.maikeruwu.substats.ui.statistics.list.ListViewModel
+import com.maikeruwu.substats.ui.statistics.list.AbstractListViewModel
 
-class MostPlayedSongsViewModel : ListViewModel() {
-
+class MostPlayedSongsViewModel : AbstractListViewModel() {
     private val _songs = MutableLiveData<List<Song>>().apply {
         value = mutableListOf<Song>()
     }
