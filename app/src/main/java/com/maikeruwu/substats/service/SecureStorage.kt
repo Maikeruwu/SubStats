@@ -79,7 +79,7 @@ object SecureStorage {
         return if (encryptedData == null) null else try {
             decrypt(encryptedData, key.value + IV_SUFFIX)
         } catch (e: IllegalStateException) {
-            e.printStackTrace()
+            println(e.message)
             null
         }
     }

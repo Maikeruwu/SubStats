@@ -1,4 +1,3 @@
 package com.maikeruwu.substats.service.endpoint
 
-interface SubsonicLibraryScanService {
-}
+interface SubsonicLibraryScanService

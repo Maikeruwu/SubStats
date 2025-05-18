@@ -16,12 +16,13 @@ class SafeDateDeserializer : JsonDeserializer<LocalDateTime?> {
         typeOfT: Type,
         context: JsonDeserializationContext
     ): LocalDateTime? {
+        val dateString = json.asString
         return try {
             val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-            val date: Date = dateFormat.parse(json.asString) ?: return null
+            val date: Date = dateFormat.parse(dateString) ?: return null
             LocalDateTime.ofInstant(date.toInstant(), java.time.ZoneId.systemDefault())
-        } catch (e: Exception) {
-            e.printStackTrace()
+        } catch (_: Exception) {
+            println("Could not parse date: $dateString")
             null
         }
     }

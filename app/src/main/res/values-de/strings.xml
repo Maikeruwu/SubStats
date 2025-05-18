@@ -14,7 +14,9 @@
     <string name="title_most_played_songs">Meistgespielte Lieder</string>
     <string name="title_most_played_artists">Meistgespielte Künstler</string>
     <string name="play_count">Anzahl der Wiedergaben:</string>
-    <string name="last_played">Zuletzt abgespielt:</string>
+    <string name="last_played">Zuletzt gehört:</string>
     <string name="cover_art">Titelbild</string>
-    <string name="progress_text">%1d Lieder geladen…</string>
+    <string name="never">Nie</string>
+    <string name="invalid_base_url">Die konfigurierte Basis URL scheint falsch zu sein.\nBitte überprüfe sie nochmal und versuche es erneut.</string>
+    <string name="title_most_played_albums">Meistgespielte Alben</string>
 </resources>

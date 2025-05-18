@@ -1,4 +1,3 @@
 package com.maikeruwu.substats.service.endpoint
 
-interface SubsonicChatService {
-}
+interface SubsonicChatService

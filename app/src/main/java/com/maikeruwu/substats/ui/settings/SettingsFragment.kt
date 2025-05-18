@@ -25,15 +25,18 @@ class SettingsFragment : Fragment() {
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        val settingsViewModel =
-            ViewModelProvider(this)[SettingsViewModel::class.java]
+        val settingsViewModel = ViewModelProvider(this)[SettingsViewModel::class.java]
 
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        settingsViewModel.statusText.observe(viewLifecycleOwner) {
+            if (it.isEmpty()) return@observe
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            settingsViewModel.setStatusText("")
+        }
 
         val editTextBaseUrl = binding.editTextBaseUrl
         settingsViewModel.baseUrl.observe(viewLifecycleOwner) {
@@ -56,28 +59,31 @@ class SettingsFragment : Fragment() {
             saveSettings()
             val systemService = SubsonicApiProvider.createService(SubsonicSystemService::class)
             lifecycleScope.launch {
-                settingsViewModel.setStatusText(
-                    getString(
-                        R.string.settings_test_response,
-                        try {
-                            val res = systemService?.ping()
-
-                            when (res?.status) {
+                try {
+                    val res = systemService?.ping()
+                    settingsViewModel.setStatusText(
+                        getString(
+                            R.string.settings_test_response, when (res?.status) {
                                 "ok" -> getString(android.R.string.ok)
                                 else -> getString(R.string.response_failed)
                             }
-                        } catch (e: HttpException) {
-                            "${e.code()} ${e.message()}"
-                        }
+                        )
                     )
-                )
+                } catch (e: HttpException) {
+                    settingsViewModel.setStatusText(
+                        getString(
+                            R.string.response_error, e.code(), e.message()
+                        )
+                    )
+                } catch (_: Exception) {
+                    settingsViewModel.setStatusText(
+                        getString(
+                            R.string.response_failed
+                        )
+                    )
+                }
             }
         }
-
-        settingsViewModel.statusText.observe(viewLifecycleOwner) {
-            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-        }
-
         return root
     }
 
@@ -87,8 +93,7 @@ class SettingsFragment : Fragment() {
     }
 
     fun saveSettings() {
-        val settingsViewModel =
-            ViewModelProvider(this)[SettingsViewModel::class.java]
+        val settingsViewModel = ViewModelProvider(this)[SettingsViewModel::class.java]
         settingsViewModel.setBaseUrl(binding.editTextBaseUrl.text.toString())
         settingsViewModel.setApiKey(binding.editTextApiKey.text.toString())
         SecureStorage.set(SecureStorage.Key.BASE_URL, settingsViewModel.baseUrl.value ?: "")

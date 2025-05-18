@@ -13,9 +13,21 @@
 
     <fragment
             android:id="@+id/navigation_statistics_most_played_songs"
-            android:name="com.maikeruwu.substats.ui.statistics.mostPlayedSongs.MostPlayedSongsFragment"
+            android:name="com.maikeruwu.substats.ui.statistics.list.mostPlayedSongs.MostPlayedSongsFragment"
             android:label="@string/title_most_played_songs"
-            tools:layout="@layout/fragment_statistics_most_played_songs" />
+            tools:layout="@layout/fragment_statistics_list" />
+
+    <fragment
+            android:id="@+id/navigation_statistics_most_played_artists"
+            android:name="com.maikeruwu.substats.ui.statistics.list.mostPlayedArtists.MostPlayedArtistsFragment"
+            android:label="@string/title_most_played_artists"
+            tools:layout="@layout/fragment_statistics_list" />
+
+    <fragment
+            android:id="@+id/navigation_statistics_most_played_albums"
+            android:name="com.maikeruwu.substats.ui.statistics.list.mostPlayedAlbums.MostPlayedAlbumsFragment"
+            android:label="@string/title_most_played_albums"
+            tools:layout="@layout/fragment_statistics_list" />
 
     <fragment
             android:id="@+id/navigation_manage"

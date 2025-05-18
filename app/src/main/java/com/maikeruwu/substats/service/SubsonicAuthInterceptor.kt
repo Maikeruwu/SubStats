@@ -3,7 +3,6 @@ package com.maikeruwu.substats.service
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.Response
-import java.net.SocketTimeoutException
 
 class SubsonicAuthInterceptor(
     private val clientName: String = "SubStats",
@@ -18,12 +17,7 @@ class SubsonicAuthInterceptor(
         val newRequest = original.newBuilder()
             .url(newUrl)
             .build()
-        return try {
-            chain.proceed(newRequest)
-        } catch (e: SocketTimeoutException) {
-            e.printStackTrace()
-            Response.Builder().build()
-        }
+        return chain.proceed(newRequest)
     }
 
     fun applyQueryParams(urlBuilder: HttpUrl.Builder): HttpUrl.Builder {

@@ -62,8 +62,8 @@ object SubsonicApiProvider {
                 .client(httpClient)
                 .build()
                 .create(serviceClass.java)
-        } catch (e: IllegalArgumentException) {
-            e.printStackTrace()
+        } catch (_: IllegalArgumentException) {
+            println("Illegal Argument Exception, probably due to a misconfigured base URL")
             null
         }
     }

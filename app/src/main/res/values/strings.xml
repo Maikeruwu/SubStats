@@ -18,5 +18,7 @@
     <string name="play_count">Play Count:</string>
     <string name="last_played">Last Played:</string>
     <string name="cover_art">Cover Art</string>
-    <string name="progress_text">Loaded %1d Songs…</string>
+    <string name="never">Never</string>
+    <string name="invalid_base_url">The configured Base URL seems to be wrong.\nPlease check it and try again.</string>
+    <string name="title_most_played_albums">Most Played Albums</string>
 </resources>

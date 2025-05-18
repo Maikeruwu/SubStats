@@ -1,4 +1,4 @@
-package com.maikeruwu.substats.ui.statistics.mostPlayedSongs
+package com.maikeruwu.substats.ui.statistics.list.mostPlayedArtists
 
 import android.net.Uri
 import android.view.LayoutInflater
@@ -10,35 +10,43 @@ import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.maikeruwu.substats.R
+import com.maikeruwu.substats.model.data.Artist
 import com.maikeruwu.substats.model.data.Song
 import com.maikeruwu.substats.service.SecureStorage
 import com.maikeruwu.substats.service.SubsonicApiProvider
 import com.maikeruwu.substats.service.SubsonicAuthInterceptor
-import kotlinx.coroutines.DelicateCoroutinesApi
 import okhttp3.HttpUrl
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class SongAdapter(private val songs: List<Song>) :
-    RecyclerView.Adapter<SongAdapter.SongViewHolder>() {
+class ArtistSongsAdapter(
+    private val artistSongs: Map<Artist, List<Song>>,
+    private val neverString: String
+) :
+    RecyclerView.Adapter<ArtistSongsAdapter.ArtistSongsViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArtistSongsViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.card_song, parent, false)
-        return SongViewHolder(view)
+        return ArtistSongsViewHolder(view)
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
-    override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
-        val song = songs[position]
+    override fun onBindViewHolder(holder: ArtistSongsViewHolder, position: Int) {
+        val pair = artistSongs.entries.elementAt(position)
 
-        holder.name.text = song.title
-        holder.playCount.text = song.playCount.toString()
-        holder.lastPlayed.text = if (song.played == null) "Never" else
-            song.played.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        holder.coverArt.load(getCoverArtUri(song.coverArt))
+        holder.name.text = pair.key.name
+        holder.playCount.text = pair.value.sumOf { song -> song.playCount }.toString()
+        holder.lastPlayed.text =
+            pair.value.maxByOrNull { it.played ?: LocalDateTime.MIN }?.played?.format(
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            ) ?: neverString
+        holder.coverArt.load(getCoverArtUri(pair.value.firstOrNull()?.coverArt.orEmpty())) {
+            placeholder(R.drawable.outline_music_note_95)
+            error(R.drawable.outline_music_note_95)
+        }
     }
 
     override fun getItemCount(): Int {
-        return songs.size
+        return artistSongs.size
     }
 
     private fun getCoverArtUri(id: String): Uri {
@@ -59,7 +67,7 @@ class SongAdapter(private val songs: List<Song>) :
         return SubsonicAuthInterceptor().applyQueryParams(builder).build().toString().toUri()
     }
 
-    class SongViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ArtistSongsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name: TextView = itemView.findViewById(R.id.name)
         val playCount: TextView = itemView.findViewById(R.id.valuePlayCount)
         val lastPlayed: TextView = itemView.findViewById(R.id.valueLastPlayed)

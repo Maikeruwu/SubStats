@@ -1,4 +1,3 @@
 package com.maikeruwu.substats.service.endpoint
 
-interface SubsonicPlaylistService {
-}
+interface SubsonicPlaylistService

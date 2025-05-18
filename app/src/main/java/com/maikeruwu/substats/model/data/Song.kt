@@ -25,6 +25,6 @@ data class Song(
     val genre: String,
     val coverArt: String,
     val playCount: Int,
-    val played: LocalDateTime,
+    val played: LocalDateTime?,
     val sortName: String
 )
