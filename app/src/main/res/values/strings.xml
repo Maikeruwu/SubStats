@@ -12,7 +12,6 @@
     <string name="settings_saved">Settings saved</string>
     <string name="settings_test_response">Test Response: %1s</string>
     <string name="response_failed">Failed</string>
-    <string name="response_error" translatable="false">Error %1d: %2s</string>
     <string name="title_most_played_songs">Most Played Songs</string>
     <string name="title_most_played_artists">Most Played Artists</string>
     <string name="play_count">Play Count:</string>
@@ -22,4 +21,7 @@
     <string name="invalid_base_url">The configured Base URL seems to be wrong.\nPlease check it and try again.</string>
     <string name="title_most_played_albums">Most Played Albums</string>
     <string name="response_timeout">Timeout</string>
+    <string name="response_error_code" translatable="false">Error %1d</string>
+    <string name="response_error_message" translatable="false">: %1s</string>
+    <string name="arrow_right">Arrow pointing right</string>
 </resources>

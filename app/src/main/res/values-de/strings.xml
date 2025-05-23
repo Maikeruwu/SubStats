@@ -20,4 +20,5 @@
     <string name="invalid_base_url">Die konfigurierte Basis URL scheint falsch zu sein.\nBitte überprüfe sie nochmal und versuche es erneut.</string>
     <string name="title_most_played_albums">Meistgespielte Alben</string>
     <string name="response_timeout">Zeitüberschreitung</string>
+    <string name="arrow_right">Pfeil zeigt nach rechts</string>
 </resources>

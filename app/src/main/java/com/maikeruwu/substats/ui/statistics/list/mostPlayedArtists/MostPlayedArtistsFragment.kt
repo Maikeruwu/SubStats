@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.maikeruwu.substats.R
 import com.maikeruwu.substats.model.data.Artist
@@ -16,35 +15,36 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.util.Optional
 
-class MostPlayedArtistsFragment : AbstractListFragment() {
+class MostPlayedArtistsFragment : AbstractListFragment<MostPlayedArtistsViewModel>(
+    MostPlayedArtistsViewModel::class.java
+) {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val mostPlayedArtistsViewModel =
-            ViewModelProvider(this)[MostPlayedArtistsViewModel::class.java]
-        val root: View = init(inflater, container, mostPlayedArtistsViewModel)
-        mostPlayedArtistsViewModel.artistSongs.observe(viewLifecycleOwner) {
+        val root: View = init(inflater, container, viewModel)
+        viewModel.artistSongs.observe(viewLifecycleOwner) {
             binding.recyclerView.adapter = ArtistSongsAdapter(it, getString(R.string.never))
         }
 
         val browsingService = SubsonicApiProvider.createService(SubsonicBrowsingService::class)
 
         if (browsingService == null) {
-            mostPlayedArtistsViewModel.setErrorText(getString(R.string.invalid_base_url))
+            viewModel.setErrorText(getString(R.string.invalid_base_url))
             return root
         }
 
         val jobs: MutableList<Job> = mutableListOf()
         val handler = getHandler(
-            mostPlayedArtistsViewModel,
-            mostPlayedArtistsViewModel.artistSongs.value.isNullOrEmpty(),
+            viewModel,
+            viewModel.artistSongs.value.isNullOrEmpty(),
             jobs
         )
 
         lifecycleScope.launch(handler) {
-            if (mostPlayedArtistsViewModel.artistSongs.value.isNullOrEmpty()) {
+            if (viewModel.artistSongs.value.isNullOrEmpty()) {
+                showProgressOverlay(true)
                 val artistsResponse = browsingService.getArtists()
 
                 Optional.ofNullable(artistsResponse.data)
@@ -74,7 +74,7 @@ class MostPlayedArtistsFragment : AbstractListFragment() {
                             innerJobs.forEach { it.join() }
 
                             toAdd.forEach {
-                                mostPlayedArtistsViewModel.putArtistSongs(it.first, it.second)
+                                viewModel.putArtistSongs(it.first, it.second)
                             }
                             showProgressOverlay(false)
                         })

@@ -17,7 +17,6 @@ import com.maikeruwu.substats.service.endpoint.SubsonicSystemService
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
-import java.net.SocketTimeoutException
 
 class SettingsFragment : Fragment() {
 
@@ -33,22 +32,22 @@ class SettingsFragment : Fragment() {
                 when (exception) {
                     is HttpException -> {
                         getString(
-                            R.string.response_error,
-                            exception.code(),
+                            R.string.response_error_code,
+                            exception.code()
+                        ) + if (exception.message().isNotEmpty()) getString(
+                            R.string.response_error_message,
                             exception.message()
-                        )
+                        ) else ""
                     }
 
                     is SubsonicException -> {
                         getString(
-                            R.string.response_error,
-                            exception.code,
+                            R.string.response_error_code,
+                            exception.code
+                        ) + if (exception.message.isNotEmpty()) getString(
+                            R.string.response_error_message,
                             exception.message
-                        )
-                    }
-
-                    is SocketTimeoutException -> {
-                        getString(R.string.response_timeout)
+                        ) else ""
                     }
 
                     else -> {

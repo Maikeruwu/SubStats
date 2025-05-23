@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.maikeruwu.substats.R
 import com.maikeruwu.substats.model.response.SearchResponse
@@ -15,17 +14,17 @@ import com.maikeruwu.substats.ui.statistics.list.AbstractListFragment
 import kotlinx.coroutines.launch
 import java.util.Optional
 
-class MostPlayedSongsFragment : AbstractListFragment() {
+class MostPlayedSongsFragment : AbstractListFragment<MostPlayedSongsViewModel>(
+    MostPlayedSongsViewModel::class.java
+) {
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val mostPlayedSongsViewModel =
-            ViewModelProvider(this)[MostPlayedSongsViewModel::class.java]
-        val root = init(inflater, container, mostPlayedSongsViewModel)
-        mostPlayedSongsViewModel.songs.observe(viewLifecycleOwner) {
+        val root = init(inflater, container, viewModel)
+        viewModel.songs.observe(viewLifecycleOwner) {
             binding.recyclerView.adapter = SongAdapter(it, getString(R.string.never))
         }
 
@@ -34,17 +33,18 @@ class MostPlayedSongsFragment : AbstractListFragment() {
         val searchingService = SubsonicApiProvider.createService(SubsonicSearchingService::class)
 
         if (searchingService == null) {
-            mostPlayedSongsViewModel.setErrorText(getString(R.string.invalid_base_url))
+            viewModel.setErrorText(getString(R.string.invalid_base_url))
             return root
         }
 
         val handler = getHandler(
-            mostPlayedSongsViewModel,
-            mostPlayedSongsViewModel.songs.value.isNullOrEmpty()
+            viewModel,
+            viewModel.songs.value.isNullOrEmpty()
         )
 
         lifecycleScope.launch(handler) {
-            if (mostPlayedSongsViewModel.songs.value.isNullOrEmpty()) {
+            if (viewModel.songs.value.isNullOrEmpty()) {
+                showProgressOverlay(true)
                 var response: SubsonicResponse<SearchResponse>? = null
 
                 do {
@@ -53,7 +53,7 @@ class MostPlayedSongsFragment : AbstractListFragment() {
                         .map { it.song }
                         .ifPresent {
                             offset += limit
-                            mostPlayedSongsViewModel.putSongs(it)
+                            viewModel.putSongs(it)
                             showProgressOverlay(false)
                         }
                 } while (response.data?.song?.isNotEmpty() == true)

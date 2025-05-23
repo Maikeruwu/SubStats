@@ -11,7 +11,6 @@ class SongAdapter(
 ) : AbstractListAdapter(neverString) {
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
         val song = songs[position]
-
         holder.name.text = song.title
         holder.playCount.text = song.playCount.toString()
         holder.lastPlayed.text =

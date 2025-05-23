@@ -9,6 +9,7 @@
 /.idea/assetWizardSettings.xml
 .DS_Store
 .kotlin
+/app/release
 /build
 /captures
 .externalNativeBuild
