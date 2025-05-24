@@ -24,4 +24,20 @@
     <string name="response_error_code" translatable="false">Error %1d</string>
     <string name="response_error_message" translatable="false">: %1s</string>
     <string name="arrow_right">Arrow pointing right</string>
+    <string name="title_song_details">Song Details</string>
+    <string name="error_no_entity">Could not load the requested Resource</string>
+    <string name="label_artist">Artist:</string>
+    <string name="label_album" translatable="false">Album:</string>
+    <string name="label_disc_number">Disc Number:</string>
+    <string name="label_duration">Duration:</string>
+    <string name="label_year">Year:</string>
+    <string name="label_genre" translatable="false">Genre:</string>
+    <string name="label_file_created">File created on:</string>
+    <string name="label_file_type">File Type:</string>
+    <string name="title_artist_details">Artist Details</string>
+    <string name="copied_text">Copied %1s</string>
+    <string name="name" translatable="false">Name:</string>
+    <string name="label_album_count">Album Count:</string>
+    <string name="title_album_details" translatable="false">Album Details</string>
+    <string name="label_song_count">Song Count:</string>
 </resources>

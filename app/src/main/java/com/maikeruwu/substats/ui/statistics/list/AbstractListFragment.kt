@@ -101,4 +101,6 @@ abstract class AbstractListFragment<V : AbstractListViewModel>(
         binding.progressBar.visibility = if (showProgress) View.VISIBLE else View.GONE
         binding.recyclerView.visibility = if (showList) View.VISIBLE else View.GONE
     }
+
+    protected abstract fun onItemClick(position: Int)
 }

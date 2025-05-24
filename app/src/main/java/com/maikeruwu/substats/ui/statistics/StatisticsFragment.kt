@@ -10,7 +10,6 @@ import com.maikeruwu.substats.R
 import com.maikeruwu.substats.databinding.FragmentStatisticsBinding
 
 class StatisticsFragment : Fragment() {
-
     private var _binding: FragmentStatisticsBinding? = null
 
     // This property is only valid between onCreateView and

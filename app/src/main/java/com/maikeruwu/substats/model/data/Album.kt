@@ -1,5 +1,6 @@
 package com.maikeruwu.substats.model.data
 
+import java.io.Serializable
 import java.time.LocalDateTime
 
 data class Album(
@@ -15,4 +16,4 @@ data class Album(
     val songCount: Int,
     val duration: Int,
     val song: List<Song>?
-)
+) : Serializable

@@ -13,6 +13,5 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
         <item name="textFillColor">@color/material_dynamic_neutral95</item>
-        <item name="tint">@color/material_dynamic_neutral95</item>
     </style>
 </resources>

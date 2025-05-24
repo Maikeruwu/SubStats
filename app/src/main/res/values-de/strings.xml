@@ -21,4 +21,16 @@
     <string name="title_most_played_albums">Meistgespielte Alben</string>
     <string name="response_timeout">Zeitüberschreitung</string>
     <string name="arrow_right">Pfeil zeigt nach rechts</string>
+    <string name="title_song_details">Lied Details</string>
+    <string name="error_no_entity">Die angeforderte Ressource konnte nicht geladen werden</string>
+    <string name="label_artist">Künstler:</string>
+    <string name="label_disc_number">Disknummer:</string>
+    <string name="label_duration">Laufzeit:</string>
+    <string name="label_year">Jahr:</string>
+    <string name="label_file_created">Datei erstellt am:</string>
+    <string name="label_file_type">Datei Typ:</string>
+    <string name="title_artist_details">Künstler Details</string>
+    <string name="copied_text">%1s kopiert</string>
+    <string name="label_album_count">Anzahl der Alben:</string>
+    <string name="label_song_count">Anzahl der Lieder:</string>
 </resources>

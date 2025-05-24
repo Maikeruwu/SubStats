@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.maikeruwu.substats.R
 import com.maikeruwu.substats.model.response.SearchResponse
 import com.maikeruwu.substats.model.response.SubsonicResponse
@@ -25,7 +26,8 @@ class MostPlayedSongsFragment : AbstractListFragment<MostPlayedSongsViewModel>(
     ): View {
         val root = init(inflater, container, viewModel)
         viewModel.songs.observe(viewLifecycleOwner) {
-            binding.recyclerView.adapter = SongAdapter(it, getString(R.string.never))
+            binding.recyclerView.adapter =
+                SongListAdapter(it, getString(R.string.never), ::onItemClick)
         }
 
         var offset = 0
@@ -60,5 +62,12 @@ class MostPlayedSongsFragment : AbstractListFragment<MostPlayedSongsViewModel>(
             }
         }
         return root
+    }
+
+    override fun onItemClick(position: Int) {
+        val bundle = Bundle().apply {
+            putSerializable("song", viewModel.songs.value?.get(position))
+        }
+        findNavController().navigate(R.id.navigation_song_details, bundle)
     }
 }

@@ -36,6 +36,24 @@
             tools:layout="@layout/fragment_manage" />
 
     <fragment
+            android:id="@+id/navigation_song_details"
+            android:name="com.maikeruwu.substats.ui.statistics.details.song.SongDetailsFragment"
+            android:label="@string/title_song_details"
+            tools:layout="@layout/fragment_details" />
+
+    <fragment
+            android:id="@+id/navigation_artist_details"
+            android:name="com.maikeruwu.substats.ui.statistics.details.artist.ArtistDetailsFragment"
+            android:label="@string/title_artist_details"
+            tools:layout="@layout/fragment_details" />
+
+    <fragment
+            android:id="@+id/navigation_album_details"
+            android:name="com.maikeruwu.substats.ui.statistics.details.album.AlbumDetailsFragment"
+            android:label="@string/title_album_details"
+            tools:layout="@layout/fragment_details" />
+
+    <fragment
             android:id="@+id/navigation_settings"
             android:name="com.maikeruwu.substats.ui.settings.SettingsFragment"
             android:label="@string/title_settings"

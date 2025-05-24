@@ -1,5 +1,6 @@
 package com.maikeruwu.substats.model.data
 
+import java.io.Serializable
 import java.time.LocalDateTime
 
 data class Song(
@@ -27,4 +28,4 @@ data class Song(
     val playCount: Int,
     val played: LocalDateTime?,
     val sortName: String
-)
+) : Serializable

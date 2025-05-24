@@ -3,14 +3,17 @@ package com.maikeruwu.substats.service
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import com.maikeruwu.substats.SubStatsApplication
 import com.maikeruwu.substats.model.response.SubsonicResponse
 import com.maikeruwu.substats.service.deserializer.SafeDateDeserializer
 import com.maikeruwu.substats.service.deserializer.SubsonicResponseDeserializer
 import com.maikeruwu.substats.service.endpoint.AbstractSubsonicService
+import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.File
 import java.time.LocalDateTime
 import kotlin.reflect.KClass
 
@@ -26,9 +29,13 @@ object SubsonicApiProvider {
         SecureStorage.get(SecureStorage.Key.API_KEY).orEmpty()
     )
 
+    val cacheSize = 10L * 1024 * 1024 // 10 MB
+    val cache = Cache(File(SubStatsApplication.appContext.cacheDir, "http_cache"), cacheSize)
+
     private val httpClient = OkHttpClient.Builder()
         .addInterceptor(logging)
         .addInterceptor(auth)
+        .cache(cache)
         .build()
 
     private fun getGson(classes: List<Class<*>>): Gson {
