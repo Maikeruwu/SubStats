@@ -1,19 +1,42 @@
 package com.maikeruwu.substats.service
 
 import android.net.Uri
+import android.util.Log
 import android.widget.ImageView
 import androidx.core.net.toUri
+import coil.imageLoader
 import coil.load
 import com.maikeruwu.substats.R
 import okhttp3.HttpUrl
+import okhttp3.OkHttpClient
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
 
 // -- image loading
+private val httpClient = OkHttpClient.Builder()
+    .addInterceptor { chain ->
+        var attempt = 0
+        val maxRetries = 3
+        while (true) {
+            try {
+                return@addInterceptor chain.proceed(chain.request())
+            } catch (e: java.net.SocketTimeoutException) {
+                if (++attempt > maxRetries) throw e
+            }
+        }
+        return@addInterceptor chain.proceed(chain.request())
+    }
+    .build()
+
 fun ImageView.loadCoverArt(id: String) {
-    this.load(getCoverArtUri(id)) {
+    val newImageLoader = context.imageLoader.newBuilder()
+        .okHttpClient(httpClient)
+        .build()
+    val uri = getCoverArtUri(id)
+    Log.d("SubStats", "Loading cover art from URI: $uri")
+    this.load(uri, newImageLoader) {
         placeholder(R.drawable.outline_music_note_95)
         error(R.drawable.outline_music_note_95)
     }
@@ -44,10 +67,24 @@ fun LocalDateTime.formatDate(): String {
 
 // time formatting
 fun Int.formatDuration(): String {
-    return String.format(Locale.getDefault(), "%02d:%02d", this / 60, this % 60)
+    val hours = this / 3600
+    val seconds = this % 60
+    return if (hours > 0)
+        String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, (this % 3600) / 60, seconds)
+    else
+        String.format(Locale.getDefault(), "%02d:%02d", this / 60, seconds)
 }
 
 // empty checks
 fun String?.isEmptyCardValue(): Boolean {
     return this.isNullOrEmpty() || this == "0" || this == "00:00"
+}
+
+// boolean formatting
+fun Boolean.formatBoolean(): Int {
+    return if (this) {
+        R.string.yes
+    } else {
+        R.string.no
+    }
 }

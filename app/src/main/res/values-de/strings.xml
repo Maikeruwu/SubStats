@@ -27,11 +27,18 @@
     <string name="label_disc_number">Disknummer:</string>
     <string name="label_duration">Laufzeit:</string>
     <string name="label_year">Jahr:</string>
-    <string name="label_file_created">Datei erstellt am:</string>
+    <string name="label_created">Erstellt am:</string>
     <string name="label_file_type">Datei Typ:</string>
     <string name="title_artist_details">Künstler Details</string>
     <string name="copied_text">%1s kopiert</string>
     <string name="label_album_count">Anzahl der Alben:</string>
     <string name="label_song_count">Anzahl der Lieder:</string>
     <string name="title_most_played_genres">Meistgespielte Genres</string>
+    <string name="title_most_played_playlists">Meistgespielte Wiedergabelisten</string>
+    <string name="label_modified">Bearbeitet am:</string>
+    <string name="label_owner">Besitzer:</string>
+    <string name="label_public">Öffentlich:</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
+    <string name="title_playlist_details">Wiedergabeliste Details</string>
 </resources>

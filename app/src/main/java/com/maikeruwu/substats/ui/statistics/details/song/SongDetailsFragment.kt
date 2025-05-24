@@ -50,7 +50,7 @@ class SongDetailsFragment :
                 it.played?.formatDate()
             )
             addDetailCard(
-                getString(com.maikeruwu.substats.R.string.label_file_created),
+                getString(com.maikeruwu.substats.R.string.label_created),
                 it.created.formatDate()
             )
             addDetailCard(getString(com.maikeruwu.substats.R.string.label_file_type), it.suffix)

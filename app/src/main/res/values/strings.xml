@@ -32,7 +32,7 @@
     <string name="label_duration">Duration:</string>
     <string name="label_year">Year:</string>
     <string name="label_genre" translatable="false">Genre:</string>
-    <string name="label_file_created">File created on:</string>
+    <string name="label_created">Created on:</string>
     <string name="label_file_type">File Type:</string>
     <string name="title_artist_details">Artist Details</string>
     <string name="copied_text">Copied %1s</string>
@@ -42,4 +42,11 @@
     <string name="label_song_count">Song Count:</string>
     <string name="title_most_played_genres">Most Played Genres</string>
     <string name="title_genre_details" translatable="false">Genre Details</string>
+    <string name="title_most_played_playlists">Most Played Playlists</string>
+    <string name="label_modified">Modified on:</string>
+    <string name="label_owner">Owner:</string>
+    <string name="label_public">Public:</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="title_playlist_details">Playlist Details</string>
 </resources>
