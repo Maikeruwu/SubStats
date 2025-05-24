@@ -8,13 +8,12 @@ import com.maikeruwu.substats.R
 import okhttp3.HttpUrl
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.Locale
 
 // -- image loading
 fun ImageView.loadCoverArt(id: String) {
-    val uri = getCoverArtUri(id)
-    android.util.Log.d("CoverArt", "Loading URI: $uri")
-    this.load(uri) {
+    this.load(getCoverArtUri(id)) {
         placeholder(R.drawable.outline_music_note_95)
         error(R.drawable.outline_music_note_95)
     }
@@ -40,7 +39,7 @@ fun getCoverArtUri(id: String): Uri {
 
 // date formatting
 fun LocalDateTime.formatDate(): String {
-    return this.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+    return this.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
 }
 
 // time formatting

@@ -17,7 +17,6 @@ import com.maikeruwu.substats.service.endpoint.SubsonicSearchingService
 import com.maikeruwu.substats.ui.statistics.list.AbstractListFragment
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import java.util.Optional
 
 class MostPlayedAlbumsFragment() : AbstractListFragment<MostPlayedAlbumsViewModel>(
     MostPlayedAlbumsViewModel::class.java
@@ -58,10 +57,9 @@ class MostPlayedAlbumsFragment() : AbstractListFragment<MostPlayedAlbumsViewMode
                 do {
                     val toAdd: MutableList<Pair<Album, List<Song>>> = mutableListOf()
                     response = searchingService.search("", 0, 0, limit, offset, 0, 0)
-                    Optional.ofNullable(response.data)
-                        .map { it.album }
-                        .stream().flatMap { it.stream() }
-                        .forEach {
+                    val albums = response.data?.album.orEmpty()
+
+                    albums.forEach {
                             offset += limit
 
                             jobs.add(lifecycleScope.launch(handler) {
@@ -71,7 +69,6 @@ class MostPlayedAlbumsFragment() : AbstractListFragment<MostPlayedAlbumsViewMode
                                     toAdd.add(albumResponse.data to albumResponse.data.song)
                                 }
                             })
-
                         }
                     jobs.forEach { it.join() }
 
@@ -79,7 +76,7 @@ class MostPlayedAlbumsFragment() : AbstractListFragment<MostPlayedAlbumsViewMode
                         viewModel.putAlbumSongs(it.first, it.second)
                     }
                     showProgressOverlay(false)
-                } while (response.data?.song?.isNotEmpty() == true)
+                } while (albums.isNotEmpty())
             }
         }
         return root

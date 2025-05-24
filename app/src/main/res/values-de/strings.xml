@@ -33,4 +33,5 @@
     <string name="copied_text">%1s kopiert</string>
     <string name="label_album_count">Anzahl der Alben:</string>
     <string name="label_song_count">Anzahl der Lieder:</string>
+    <string name="title_most_played_genres">Meistgespielte Genres</string>
 </resources>

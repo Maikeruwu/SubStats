@@ -22,5 +22,9 @@
         <include
                 layout="@layout/card_text"
                 android:id="@+id/mostPlayedAlbums" />
+
+        <include
+                layout="@layout/card_text"
+                android:id="@+id/mostPlayedGenres" />
     </LinearLayout>
 </ScrollView>

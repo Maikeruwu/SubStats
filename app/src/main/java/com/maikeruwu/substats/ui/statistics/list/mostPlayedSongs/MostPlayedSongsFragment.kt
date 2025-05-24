@@ -13,7 +13,6 @@ import com.maikeruwu.substats.service.SubsonicApiProvider
 import com.maikeruwu.substats.service.endpoint.SubsonicSearchingService
 import com.maikeruwu.substats.ui.statistics.list.AbstractListFragment
 import kotlinx.coroutines.launch
-import java.util.Optional
 
 class MostPlayedSongsFragment : AbstractListFragment<MostPlayedSongsViewModel>(
     MostPlayedSongsViewModel::class.java
@@ -51,14 +50,14 @@ class MostPlayedSongsFragment : AbstractListFragment<MostPlayedSongsViewModel>(
 
                 do {
                     response = searchingService.search("", 0, 0, 0, 0, limit, offset)
-                    Optional.ofNullable(response.data)
-                        .map { it.song }
-                        .ifPresent {
-                            offset += limit
-                            viewModel.putSongs(it)
-                            showProgressOverlay(false)
-                        }
-                } while (response.data?.song?.isNotEmpty() == true)
+
+                    val songs = response.data?.song.orEmpty()
+                    if (songs.isNotEmpty()) {
+                        offset += limit
+                        viewModel.putSongs(songs)
+                        showProgressOverlay(false)
+                    }
+                } while (songs.isNotEmpty())
             }
         }
         return root

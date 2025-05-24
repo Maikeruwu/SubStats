@@ -40,4 +40,6 @@
     <string name="label_album_count">Album Count:</string>
     <string name="title_album_details" translatable="false">Album Details</string>
     <string name="label_song_count">Song Count:</string>
+    <string name="title_most_played_genres">Most Played Genres</string>
+    <string name="title_genre_details" translatable="false">Genre Details</string>
 </resources>

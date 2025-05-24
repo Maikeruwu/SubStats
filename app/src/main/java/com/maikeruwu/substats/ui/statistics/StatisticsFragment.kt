@@ -42,6 +42,11 @@ class StatisticsFragment : Fragment() {
             findNavController().navigate(R.id.navigation_statistics_most_played_albums)
         }
 
+        val mostPlayedGenres = binding.mostPlayedGenres
+        mostPlayedGenres.textView.text = getString(R.string.title_most_played_genres)
+        mostPlayedGenres.root.setOnClickListener {
+            findNavController().navigate(R.id.navigation_statistics_most_played_genres)
+        }
         return root
     }
 

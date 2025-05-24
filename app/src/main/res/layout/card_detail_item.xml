@@ -23,5 +23,7 @@
             android:textSize="24sp"
             android:layout_margin="10dp"
             android:gravity="center"
-            android:id="@+id/detailValue" />
+            android:id="@+id/detailValue"
+            android:maxLines="3"
+            android:ellipsize="end" />
 </androidx.cardview.widget.CardView>

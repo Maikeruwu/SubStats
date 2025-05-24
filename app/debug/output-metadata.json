@@ -1,0 +1,21 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.maikeruwu.substats.debug",
+  "variantName": "debug",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 3,
+      "versionName": "1.2-debug",
+      "outputFile": "SubStats_1.2-debug.apk"
+    }
+  ],
+  "elementType": "File",
+  "minSdkVersionForDexing": 35
+}
