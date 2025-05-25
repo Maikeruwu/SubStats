@@ -10,6 +10,7 @@ import android.widget.TableRow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.setMargins
+import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.maikeruwu.substats.R
@@ -63,6 +64,7 @@ abstract class AbstractDetailsFragment<V : AbstractDetailsViewModel>(
     protected fun addDetailCard(
         label: String?,
         value: String?,
+        onClick: (() -> Unit)? = null
     ) {
         if (label.isNullOrEmpty() || value.isEmptyCardValue()) {
             return
@@ -84,6 +86,16 @@ abstract class AbstractDetailsFragment<V : AbstractDetailsViewModel>(
         }
         cardView.findViewById<TextView>(R.id.detailValue).apply {
             this.text = value
+
+            if (onClick != null) {
+                this.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                    0, 0, R.drawable.outline_chevron_right_24, 0
+                )
+                TextViewCompat.setCompoundDrawableTintList(
+                    this,
+                    resources.getColorStateList(R.color.dynamic_chevron_tint, null)
+                )
+            }
         }
         // Set the layout parameters
         cardView.layoutParams = TableRow.LayoutParams(
@@ -96,6 +108,10 @@ abstract class AbstractDetailsFragment<V : AbstractDetailsViewModel>(
                     R.dimen.activity_vertical_margin
                 )
             )
+        }
+        // Set the click listener if provided
+        if (onClick != null) {
+            cardView.setOnClickListener { onClick() }
         }
         // Set the long click listener to copy the value to clipboard
         setCardLongClickListener(cardView, label, value)

@@ -4,9 +4,12 @@ import android.net.Uri
 import android.util.Log
 import android.widget.ImageView
 import androidx.core.net.toUri
+import androidx.fragment.app.Fragment
 import coil.imageLoader
 import coil.load
 import com.maikeruwu.substats.R
+import com.maikeruwu.substats.service.endpoint.AbstractSubsonicService
+import com.maikeruwu.substats.ui.statistics.list.AbstractListViewModel
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import java.time.LocalDateTime
@@ -87,4 +90,18 @@ fun Boolean.formatBoolean(): Int {
     } else {
         R.string.no
     }
+}
+
+// service checks
+fun Fragment.assertServicesAvailable(
+    viewModel: AbstractListViewModel,
+    vararg services: AbstractSubsonicService?
+): Boolean {
+    for (service in services) {
+        if (service == null) {
+            viewModel.setErrorText(getString(R.string.invalid_base_url))
+            return false
+        }
+    }
+    return true
 }

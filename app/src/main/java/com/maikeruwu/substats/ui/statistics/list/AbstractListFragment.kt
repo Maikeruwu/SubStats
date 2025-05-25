@@ -25,7 +25,7 @@ abstract class AbstractListFragment<V : AbstractListViewModel>(
     // onDestroyView.
     protected val binding get() = _binding!!
 
-    protected val viewModel: V by lazy {
+    val viewModel: V by lazy {
         ViewModelProvider(this)[viewModelClass]
     }
 

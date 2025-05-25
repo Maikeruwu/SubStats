@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import com.maikeruwu.substats.R
 import com.maikeruwu.substats.model.data.Playlist
 import com.maikeruwu.substats.service.formatBoolean
@@ -31,7 +32,11 @@ class PlaylistDetailsFragment :
 
         viewModel.playlist.observe(viewLifecycleOwner) {
             setTopCard(it.name, it.coverArt)
-            addDetailCard(getString(R.string.label_song_count), it.songCount.toString())
+            addDetailCard(
+                getString(R.string.label_song_count),
+                it.songCount.toString(),
+                ::onSongCountClick
+            )
             addDetailCard(getString(R.string.label_duration), it.duration.formatDuration())
             addDetailCard(getString(R.string.label_created), it.created.formatDate())
             addDetailCard(getString(R.string.label_modified), it.changed.formatDate())
@@ -39,5 +44,12 @@ class PlaylistDetailsFragment :
             addDetailCard(getString(R.string.label_public), getString(it.public.formatBoolean()))
         }
         return root
+    }
+
+    private fun onSongCountClick() {
+        val bundle = Bundle().apply {
+            putSerializable("playlist", viewModel.playlist.value)
+        }
+        findNavController().navigate(R.id.navigation_statistics_most_played_songs, bundle)
     }
 }

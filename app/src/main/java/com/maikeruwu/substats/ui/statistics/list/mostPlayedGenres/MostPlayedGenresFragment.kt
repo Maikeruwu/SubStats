@@ -10,6 +10,7 @@ import com.maikeruwu.substats.R
 import com.maikeruwu.substats.model.response.SongsByGenreResponse
 import com.maikeruwu.substats.model.response.SubsonicResponse
 import com.maikeruwu.substats.service.SubsonicApiProvider
+import com.maikeruwu.substats.service.assertServicesAvailable
 import com.maikeruwu.substats.service.endpoint.SubsonicBrowsingService
 import com.maikeruwu.substats.service.endpoint.SubsonicSongListService
 import com.maikeruwu.substats.ui.statistics.list.AbstractListFragment
@@ -30,39 +31,36 @@ class MostPlayedGenresFragment : AbstractListFragment<MostPlayedGenresViewModel>
             binding.recyclerView.adapter =
                 GenreSongListAdapter(it, getString(R.string.never), ::onItemClick)
         }
+        if (viewModel.genreSongs.value.isNullOrEmpty()) {
+            val browsingService = SubsonicApiProvider.createService(SubsonicBrowsingService::class)
+            val songListService = SubsonicApiProvider.createService(SubsonicSongListService::class)
+            assertServicesAvailable(viewModel, browsingService, songListService)
 
-        val limit = 20
-        var offset = 0
-        val browsingService = SubsonicApiProvider.createService(SubsonicBrowsingService::class)
-        val songListService = SubsonicApiProvider.createService(SubsonicSongListService::class)
+            val jobs: MutableList<Job> = mutableListOf()
+            val handler = getHandler(
+                viewModel,
+                viewModel.genreSongs.value.isNullOrEmpty(),
+                jobs
+            )
+            val genreName = arguments?.getString("genreName")
 
-        if (browsingService == null || songListService == null) {
-            viewModel.setErrorText(getString(R.string.invalid_base_url))
-            return root
-        }
-
-        val jobs: MutableList<Job> = mutableListOf()
-        val handler = getHandler(
-            viewModel,
-            viewModel.genreSongs.value.isNullOrEmpty(),
-            jobs
-        )
-
-        lifecycleScope.launch(handler) {
-            if (viewModel.genreSongs.value.isNullOrEmpty()) {
+            lifecycleScope.launch(handler) {
                 showProgressOverlay(true)
-                val genresResponse = browsingService.getGenres()
+                val limit = 20
+                val genresResponse = browsingService!!.getGenres()
 
                 Optional.ofNullable(genresResponse.data)
                     .map { it.genre }
                     .stream().flatMap { it.stream() }
+                    .filter { genreName == null || it.value == genreName }
                     .forEach { genre ->
                         jobs.add(lifecycleScope.launch(handler) {
+                            var offset = 0
                             var response: SubsonicResponse<SongsByGenreResponse>? = null
 
                             do {
                                 response =
-                                    songListService.getSongsByGenre(genre.value, limit, offset)
+                                    songListService!!.getSongsByGenre(genre.value, limit, offset)
 
                                 val songs = response.data?.song.orEmpty()
                                 if (songs.isNotEmpty()) {

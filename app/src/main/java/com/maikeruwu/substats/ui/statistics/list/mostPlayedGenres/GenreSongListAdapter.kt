@@ -16,7 +16,7 @@ class GenreSongListAdapter(
         val pair = genreSongs.entries.elementAt(position)
 
         holder.name.text = pair.key.value
-        holder.playCount.text = pair.value.sumOf { song -> song.playCount }.toString()
+        holder.playCount.text = pair.value.sumOf { it.playCount }.toString()
         holder.lastPlayed.text =
             pair.value.maxByOrNull { it.played ?: LocalDateTime.MIN }?.played?.formatDate()
                 ?: neverString

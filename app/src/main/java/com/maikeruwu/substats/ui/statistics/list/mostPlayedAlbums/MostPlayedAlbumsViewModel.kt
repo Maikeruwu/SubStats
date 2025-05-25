@@ -3,19 +3,18 @@ package com.maikeruwu.substats.ui.statistics.list.mostPlayedAlbums
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.maikeruwu.substats.model.data.Album
-import com.maikeruwu.substats.model.data.Song
 import com.maikeruwu.substats.ui.statistics.list.AbstractListViewModel
 
 class MostPlayedAlbumsViewModel : AbstractListViewModel() {
-    private val _albumSongs = MutableLiveData<Map<Album, List<Song>>>().apply {
-        value = mutableMapOf()
+    private val _albums = MutableLiveData<List<Album>>().apply {
+        value = mutableListOf()
     }
-    val albumSongs: LiveData<Map<Album, List<Song>>> = _albumSongs
+    val albums: LiveData<List<Album>> = _albums
 
-    fun putAlbumSongs(album: Album, songs: List<Song>) {
-        val currentMap = _albumSongs.value?.toMutableMap() ?: mutableMapOf()
-        currentMap[album] = songs
-        _albumSongs.value = currentMap.toList()
-            .sortedByDescending { (_, songs) -> songs.sumOf { song -> song.playCount } }.toMap()
+    fun putAlbum(album: Album) {
+        val currentList = _albums.value?.toMutableList() ?: mutableListOf()
+        currentList.add(album)
+        _albums.value = currentList
+            .sortedByDescending { it.song?.sumOf { song -> song.playCount } }.toList()
     }
 }

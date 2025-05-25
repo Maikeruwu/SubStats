@@ -8,15 +8,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.maikeruwu.substats.R
 import com.maikeruwu.substats.model.data.Album
-import com.maikeruwu.substats.model.data.Song
 import com.maikeruwu.substats.model.response.SearchResponse
 import com.maikeruwu.substats.model.response.SubsonicResponse
 import com.maikeruwu.substats.service.SubsonicApiProvider
+import com.maikeruwu.substats.service.assertServicesAvailable
 import com.maikeruwu.substats.service.endpoint.SubsonicBrowsingService
 import com.maikeruwu.substats.service.endpoint.SubsonicSearchingService
 import com.maikeruwu.substats.ui.statistics.list.AbstractListFragment
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.util.Optional
 
 class MostPlayedAlbumsFragment() : AbstractListFragment<MostPlayedAlbumsViewModel>(
     MostPlayedAlbumsViewModel::class.java
@@ -27,58 +28,65 @@ class MostPlayedAlbumsFragment() : AbstractListFragment<MostPlayedAlbumsViewMode
         savedInstanceState: Bundle?
     ): View {
         val root: View = init(inflater, container, viewModel)
-        viewModel.albumSongs.observe(viewLifecycleOwner) {
+        viewModel.albums.observe(viewLifecycleOwner) {
             binding.recyclerView.adapter =
-                AlbumSongListAdapter(it, getString(R.string.never), ::onItemClick)
+                AlbumListAdapter(it, getString(R.string.never), ::onItemClick)
         }
+        if (viewModel.albums.value.isNullOrEmpty()) {
+            val browsingService = SubsonicApiProvider.createService(SubsonicBrowsingService::class)
+            assertServicesAvailable(viewModel, browsingService)
 
-        var offset = 0
-        val limit = 20
-        val searchingService = SubsonicApiProvider.createService(SubsonicSearchingService::class)
-        val browsingService = SubsonicApiProvider.createService(SubsonicBrowsingService::class)
+            val handler = getHandler(viewModel, viewModel.albums.value.isNullOrEmpty())
 
-        if (searchingService == null || browsingService == null) {
-            viewModel.setErrorText(getString(R.string.invalid_base_url))
-            return root
-        }
+            val artistId = arguments?.getString("artistId")
+            if (artistId != null) {
+                lifecycleScope.launch(handler) {
+                    showProgressOverlay(true)
+                    val artistResponse = browsingService!!.getArtist(artistId)
+                    processAlbums(artistResponse.data?.album.orEmpty(), browsingService)
 
-        val jobs: MutableList<Job> = mutableListOf()
-        val handler = getHandler(
-            viewModel,
-            viewModel.albumSongs.value.isNullOrEmpty(),
-            jobs
-        )
+                    if (viewModel.albums.value.isNullOrEmpty()) {
+                        viewModel.setErrorText(getString(R.string.error_no_entries))
+                    }
+                }
+                return root
+            }
 
-        lifecycleScope.launch(handler) {
-            if (viewModel.albumSongs.value.isNullOrEmpty()) {
+            val albumId = arguments?.getString("albumId")
+            if (albumId != null) {
+                lifecycleScope.launch(handler) {
+                    showProgressOverlay(true)
+                    val response = browsingService!!.getAlbum(albumId)
+                    Optional.ofNullable(response.data)
+                        .ifPresentOrElse(
+                            { viewModel.putAlbum(it) },
+                            { viewModel.setErrorText(getString(R.string.error_no_entries)) }
+                        )
+                    showProgressOverlay(false)
+                }
+                return root
+            }
+
+            val genreName = arguments?.getString("genreName")
+
+            val searchingService =
+                SubsonicApiProvider.createService(SubsonicSearchingService::class)
+            assertServicesAvailable(viewModel, searchingService)
+            lifecycleScope.launch(handler) {
                 showProgressOverlay(true)
+                val limit = 20
+                var offset = 0
                 var response: SubsonicResponse<SearchResponse>? = null
 
                 do {
-                    val toAdd: MutableList<Pair<Album, List<Song>>> = mutableListOf()
-                    response = searchingService.search("", 0, 0, limit, offset, 0, 0)
+                    response = searchingService!!.search("", 0, 0, limit, offset, 0, 0)
                     val albums = response.data?.album.orEmpty()
-
-                    albums.forEach {
-                            offset += limit
-
-                            jobs.add(lifecycleScope.launch(handler) {
-                                val albumResponse = browsingService.getAlbum(it.id)
-
-                                if (albumResponse.data != null && albumResponse.data.song != null) {
-                                    toAdd.add(albumResponse.data to albumResponse.data.song)
-                                }
-                            })
-                        }
-                    jobs.forEach { it.join() }
-
-                    toAdd.forEach {
-                        viewModel.putAlbumSongs(it.first, it.second)
-                    }
-                    showProgressOverlay(false)
+                        .filter { genreName == null || it.genre == genreName }
+                    processAlbums(albums, browsingService!!)
+                    offset += limit
                 } while (albums.isNotEmpty())
 
-                if (viewModel.albumSongs.value.isNullOrEmpty()) {
+                if (viewModel.albums.value.isNullOrEmpty()) {
                     viewModel.setErrorText(getString(R.string.error_no_entries))
                 }
             }
@@ -88,8 +96,34 @@ class MostPlayedAlbumsFragment() : AbstractListFragment<MostPlayedAlbumsViewMode
 
     override fun onItemClick(position: Int) {
         val bundle = Bundle().apply {
-            putSerializable("album", viewModel.albumSongs.value?.toList()?.get(position)?.first)
+            putSerializable("album", viewModel.albums.value?.get(position))
         }
         findNavController().navigate(R.id.navigation_album_details, bundle)
+    }
+
+    private suspend fun processAlbums(
+        albums: List<Album>,
+        browsingService: SubsonicBrowsingService
+    ) {
+        val toAdd: MutableList<Album> = mutableListOf()
+        val jobs: MutableList<Job> = mutableListOf()
+        val handler = getHandler(
+            viewModel,
+            viewModel.albums.value.isNullOrEmpty(),
+            jobs
+        )
+
+        albums.forEach {
+            jobs.add(lifecycleScope.launch(handler) {
+                val albumResponse = browsingService.getAlbum(it.id)
+
+                if (albumResponse.data != null && albumResponse.data.song != null) {
+                    toAdd.add(albumResponse.data)
+                }
+            })
+        }
+        jobs.forEach { it.join() }
+        toAdd.forEach { viewModel.putAlbum(it) }
+        showProgressOverlay(false)
     }
 }

@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.maikeruwu.substats.R
 import com.maikeruwu.substats.service.SubsonicApiProvider
+import com.maikeruwu.substats.service.assertServicesAvailable
 import com.maikeruwu.substats.service.endpoint.SubsonicPlaylistService
 import com.maikeruwu.substats.ui.statistics.list.AbstractListFragment
 import kotlinx.coroutines.Job
@@ -27,25 +28,20 @@ class MostPlayedPlaylistsFragment : AbstractListFragment<MostPlayedPlaylistsView
             binding.recyclerView.adapter =
                 PlaylistListAdapter(it, getString(R.string.never), ::onItemClick)
         }
+        if (viewModel.playlists.value.isNullOrEmpty()) {
+            val playlistService = SubsonicApiProvider.createService(SubsonicPlaylistService::class)
+            assertServicesAvailable(viewModel, playlistService)
 
-        val playlistService = SubsonicApiProvider.createService(SubsonicPlaylistService::class)
+            val jobs: MutableList<Job> = mutableListOf()
+            val handler = getHandler(
+                viewModel,
+                viewModel.playlists.value.isNullOrEmpty(),
+                jobs
+            )
 
-        if (playlistService == null) {
-            viewModel.setErrorText(getString(R.string.invalid_base_url))
-            return root
-        }
-
-        val jobs: MutableList<Job> = mutableListOf()
-        val handler = getHandler(
-            viewModel,
-            viewModel.playlists.value.isNullOrEmpty(),
-            jobs
-        )
-
-        lifecycleScope.launch(handler) {
-            if (viewModel.playlists.value.isNullOrEmpty()) {
+            lifecycleScope.launch(handler) {
                 showProgressOverlay(true)
-                val playlistsResponse = playlistService.getPlaylists()
+                val playlistsResponse = playlistService!!.getPlaylists()
 
                 Optional.ofNullable(playlistsResponse.data)
                     .map { it.playlist }
@@ -73,7 +69,7 @@ class MostPlayedPlaylistsFragment : AbstractListFragment<MostPlayedPlaylistsView
 
     override fun onItemClick(position: Int) {
         val bundle = Bundle().apply {
-            putSerializable("playlist", viewModel.playlists.value?.firstOrNull())
+            putSerializable("playlist", viewModel.playlists.value?.get(position))
         }
         findNavController().navigate(R.id.navigation_playlist_details, bundle)
     }

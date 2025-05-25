@@ -15,7 +15,6 @@ class MostPlayedPlaylistsViewModel : AbstractListViewModel() {
         val currentList = _playlists.value?.toMutableList() ?: mutableListOf()
         currentList.add(playlist)
         _playlists.value = currentList
-            .sortedByDescending { playlist -> playlist.entry?.sumOf { song -> song.playCount } }
-            .toList()
+            .sortedByDescending { it.entry?.sumOf { song -> song.playCount } }.toList()
     }
 }

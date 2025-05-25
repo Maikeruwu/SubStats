@@ -15,7 +15,7 @@ class PlaylistListAdapter(
         val playlist = playlists[position]
 
         holder.name.text = playlist.name
-        holder.playCount.text = playlist.entry?.sumOf { song -> song.playCount }.toString()
+        holder.playCount.text = playlist.entry?.sumOf { it.playCount }.toString()
         holder.lastPlayed.text =
             playlist.entry?.maxByOrNull { it.played ?: LocalDateTime.MIN }?.played?.formatDate()
                 ?: neverString

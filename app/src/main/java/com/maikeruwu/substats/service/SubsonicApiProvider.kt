@@ -1,5 +1,6 @@
 package com.maikeruwu.substats.service
 
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
@@ -70,7 +71,10 @@ object SubsonicApiProvider {
                 .build()
                 .create(serviceClass.java)
         } catch (_: IllegalArgumentException) {
-            println("Illegal Argument Exception, probably due to a misconfigured base URL")
+            Log.e(
+                "SubStats",
+                "Illegal Argument Exception, probably due to a misconfigured base URL"
+            )
             null
         }
     }
