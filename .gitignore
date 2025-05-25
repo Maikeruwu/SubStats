@@ -1,3 +1,4 @@
+*.apk
 *.iml
 .gradle
 /local.properties
@@ -10,6 +11,7 @@
 .DS_Store
 .kotlin
 /app/release
+/app/debug
 /build
 /captures
 .externalNativeBuild

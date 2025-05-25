@@ -62,6 +62,10 @@ class MostPlayedPlaylistsFragment : AbstractListFragment<MostPlayedPlaylistsView
                         })
                     }
                 jobs.forEach { it.join() }
+
+                if (viewModel.playlists.value.isNullOrEmpty()) {
+                    viewModel.setErrorText(getString(R.string.error_no_entries))
+                }
             }
         }
         return root

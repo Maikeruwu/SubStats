@@ -74,6 +74,10 @@ class MostPlayedGenresFragment : AbstractListFragment<MostPlayedGenresViewModel>
                         })
                     }
                 jobs.forEach { it.join() }
+
+                if (viewModel.genreSongs.value.isNullOrEmpty()) {
+                    viewModel.setErrorText(getString(R.string.error_no_entries))
+                }
             }
         }
         return root

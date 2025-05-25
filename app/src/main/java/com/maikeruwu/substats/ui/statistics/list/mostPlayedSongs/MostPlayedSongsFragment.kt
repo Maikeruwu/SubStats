@@ -58,6 +58,10 @@ class MostPlayedSongsFragment : AbstractListFragment<MostPlayedSongsViewModel>(
                         showProgressOverlay(false)
                     }
                 } while (songs.isNotEmpty())
+
+                if (viewModel.songs.value.isNullOrEmpty()) {
+                    viewModel.setErrorText(getString(R.string.error_no_entries))
+                }
             }
         }
         return root

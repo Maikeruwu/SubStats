@@ -49,4 +49,5 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="title_playlist_details">Playlist Details</string>
+    <string name="error_no_entries">No entries</string>
 </resources>

@@ -82,6 +82,10 @@ class MostPlayedArtistsFragment : AbstractListFragment<MostPlayedArtistsViewMode
                         })
                     }
                 jobs.forEach { it.join() }
+
+                if (viewModel.artistSongs.value.isNullOrEmpty()) {
+                    viewModel.setErrorText(getString(R.string.error_no_entries))
+                }
             }
         }
         return root

@@ -41,4 +41,5 @@
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
     <string name="title_playlist_details">Wiedergabeliste Details</string>
+    <string name="error_no_entries">Keine Einträge</string>
 </resources>
