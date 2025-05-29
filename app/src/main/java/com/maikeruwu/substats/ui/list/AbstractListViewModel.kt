@@ -5,7 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 open class AbstractListViewModel : ViewModel() {
-    private val _errorText = MutableLiveData<String>()
+    private val _errorText = MutableLiveData<String>().apply {
+        value = ""  // Initialize with an empty string
+    }
     val errorText: LiveData<String> = _errorText
 
     fun setErrorText(text: String) {
