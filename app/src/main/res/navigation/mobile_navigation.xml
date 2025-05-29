@@ -13,31 +13,31 @@
 
     <fragment
             android:id="@+id/navigation_statistics_most_played_songs"
-            android:name="com.maikeruwu.substats.ui.statistics.list.mostPlayedSongs.MostPlayedSongsFragment"
+            android:name="com.maikeruwu.substats.ui.list.mostPlayedSongs.MostPlayedSongsFragment"
             android:label="@string/title_most_played_songs"
             tools:layout="@layout/fragment_statistics_list" />
 
     <fragment
             android:id="@+id/navigation_statistics_most_played_artists"
-            android:name="com.maikeruwu.substats.ui.statistics.list.mostPlayedArtists.MostPlayedArtistsFragment"
+            android:name="com.maikeruwu.substats.ui.list.mostPlayedArtists.MostPlayedArtistsFragment"
             android:label="@string/title_most_played_artists"
             tools:layout="@layout/fragment_statistics_list" />
 
     <fragment
             android:id="@+id/navigation_statistics_most_played_albums"
-            android:name="com.maikeruwu.substats.ui.statistics.list.mostPlayedAlbums.MostPlayedAlbumsFragment"
+            android:name="com.maikeruwu.substats.ui.list.mostPlayedAlbums.MostPlayedAlbumsFragment"
             android:label="@string/title_most_played_albums"
             tools:layout="@layout/fragment_statistics_list" />
 
     <fragment
             android:id="@+id/navigation_statistics_most_played_genres"
-            android:name="com.maikeruwu.substats.ui.statistics.list.mostPlayedGenres.MostPlayedGenresFragment"
+            android:name="com.maikeruwu.substats.ui.list.mostPlayedGenres.MostPlayedGenresFragment"
             android:label="@string/title_most_played_genres"
             tools:layout="@layout/fragment_statistics_list" />
 
     <fragment
             android:id="@+id/navigation_statistics_most_played_playlists"
-            android:name="com.maikeruwu.substats.ui.statistics.list.mostPlayedPlaylists.MostPlayedPlaylistsFragment"
+            android:name="com.maikeruwu.substats.ui.list.mostPlayedPlaylists.MostPlayedPlaylistsFragment"
             android:label="@string/title_most_played_playlists"
             tools:layout="@layout/fragment_statistics_list" />
 
@@ -49,31 +49,31 @@
 
     <fragment
             android:id="@+id/navigation_song_details"
-            android:name="com.maikeruwu.substats.ui.statistics.details.song.SongDetailsFragment"
+            android:name="com.maikeruwu.substats.ui.details.song.SongDetailsFragment"
             android:label="@string/title_song_details"
             tools:layout="@layout/fragment_details" />
 
     <fragment
             android:id="@+id/navigation_artist_details"
-            android:name="com.maikeruwu.substats.ui.statistics.details.artist.ArtistDetailsFragment"
+            android:name="com.maikeruwu.substats.ui.details.artist.ArtistDetailsFragment"
             android:label="@string/title_artist_details"
             tools:layout="@layout/fragment_details" />
 
     <fragment
             android:id="@+id/navigation_album_details"
-            android:name="com.maikeruwu.substats.ui.statistics.details.album.AlbumDetailsFragment"
+            android:name="com.maikeruwu.substats.ui.details.album.AlbumDetailsFragment"
             android:label="@string/title_album_details"
             tools:layout="@layout/fragment_details" />
 
     <fragment
             android:id="@+id/navigation_genre_details"
-            android:name="com.maikeruwu.substats.ui.statistics.details.genre.GenreDetailsFragment"
+            android:name="com.maikeruwu.substats.ui.details.genre.GenreDetailsFragment"
             android:label="@string/title_genre_details"
             tools:layout="@layout/fragment_details" />
 
     <fragment
             android:id="@+id/navigation_playlist_details"
-            android:name="com.maikeruwu.substats.ui.statistics.details.playlist.PlaylistDetailsFragment"
+            android:name="com.maikeruwu.substats.ui.details.playlist.PlaylistDetailsFragment"
             android:label="@string/title_playlist_details"
             tools:layout="@layout/fragment_details" />
 

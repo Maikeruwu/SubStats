@@ -9,7 +9,7 @@ import coil.imageLoader
 import coil.load
 import com.maikeruwu.substats.R
 import com.maikeruwu.substats.service.endpoint.AbstractSubsonicService
-import com.maikeruwu.substats.ui.statistics.list.AbstractListViewModel
+import com.maikeruwu.substats.ui.list.AbstractListViewModel
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import java.time.LocalDateTime
