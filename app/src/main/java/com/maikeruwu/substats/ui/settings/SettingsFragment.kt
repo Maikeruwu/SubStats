@@ -26,6 +26,10 @@ class SettingsFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
+    private val viewModel: SettingsViewModel by lazy {
+        ViewModelProvider(this)[SettingsViewModel::class.java]
+    }
+
     private fun getHandler(viewModel: SettingsViewModel): CoroutineExceptionHandler {
         return CoroutineExceptionHandler { _, exception ->
             viewModel.setStatusText(
@@ -61,40 +65,38 @@ class SettingsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        val settingsViewModel = ViewModelProvider(this)[SettingsViewModel::class.java]
-
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        settingsViewModel.statusText.observe(viewLifecycleOwner) {
+        viewModel.statusText.observe(viewLifecycleOwner) {
             if (it.isEmpty()) return@observe
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-            settingsViewModel.setStatusText("")
+            viewModel.setStatusText("")
         }
 
         val editTextBaseUrl = binding.editTextBaseUrl
-        settingsViewModel.baseUrl.observe(viewLifecycleOwner) {
+        viewModel.baseUrl.observe(viewLifecycleOwner) {
             editTextBaseUrl.setText(it)
         }
 
         val editTextApiKey = binding.editTextApiKey
-        settingsViewModel.apiKey.observe(viewLifecycleOwner) {
+        viewModel.apiKey.observe(viewLifecycleOwner) {
             editTextApiKey.setText(it)
         }
 
         val buttonSave = binding.buttonSave
         buttonSave.setOnClickListener {
-            saveSettings(settingsViewModel)
-            settingsViewModel.setStatusText(getString(R.string.settings_saved))
+            saveSettings()
+            viewModel.setStatusText(getString(R.string.settings_saved))
         }
 
         val buttonTest = binding.buttonTest
         buttonTest.setOnClickListener {
-            saveSettings(settingsViewModel)
+            saveSettings()
             val systemService = SubsonicApiProvider.createService(SubsonicSystemService::class)
-            lifecycleScope.launch(getHandler(settingsViewModel)) {
+            lifecycleScope.launch(getHandler(viewModel)) {
                 val res = systemService?.ping()
-                settingsViewModel.setStatusText(
+                viewModel.setStatusText(
                     getString(
                         R.string.settings_test_response, when (res?.status) {
                             "ok" -> getString(android.R.string.ok)
@@ -112,7 +114,7 @@ class SettingsFragment : Fragment() {
         _binding = null
     }
 
-    private fun saveSettings(viewModel: SettingsViewModel) {
+    private fun saveSettings() {
         viewModel.setBaseUrl(binding.editTextBaseUrl.text.toString())
         viewModel.setApiKey(binding.editTextApiKey.text.toString())
         SecureStorage.set(SecureStorage.Key.BASE_URL, viewModel.baseUrl.value ?: "")

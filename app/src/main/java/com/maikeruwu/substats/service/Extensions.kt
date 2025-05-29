@@ -8,10 +8,17 @@ import androidx.fragment.app.Fragment
 import coil.imageLoader
 import coil.load
 import com.maikeruwu.substats.R
+import com.maikeruwu.substats.model.exception.SubsonicException
 import com.maikeruwu.substats.service.endpoint.AbstractSubsonicService
 import com.maikeruwu.substats.ui.list.AbstractListViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
+import retrofit2.HttpException
+import java.net.SocketTimeoutException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -25,7 +32,7 @@ private val httpClient = OkHttpClient.Builder()
         while (true) {
             try {
                 return@addInterceptor chain.proceed(chain.request())
-            } catch (e: java.net.SocketTimeoutException) {
+            } catch (e: SocketTimeoutException) {
                 if (++attempt > maxRetries) throw e
             }
         }
@@ -89,6 +96,52 @@ fun Boolean.formatBoolean(): Int {
         R.string.yes
     } else {
         R.string.no
+    }
+}
+
+// handler
+fun Fragment.getHandler(
+    viewModel: AbstractListViewModel,
+    dataIsEmpty: Boolean,
+    jobs: MutableList<Job>? = null
+): CoroutineExceptionHandler {
+    return CoroutineExceptionHandler { _, exception ->
+        var message =
+            if (!dataIsEmpty && exception is SocketTimeoutException) null
+            else when (exception) {
+                is HttpException -> {
+                    getString(
+                        R.string.response_error_code,
+                        exception.code()
+                    ) + if (exception.message().isNotEmpty()) getString(
+                        R.string.response_error_message,
+                        exception.message()
+                    ) else ""
+                }
+
+                is SubsonicException -> {
+                    getString(
+                        R.string.response_error_code,
+                        exception.code
+                    ) + if (exception.message.isNotEmpty()) getString(
+                        R.string.response_error_message,
+                        exception.message
+                    ) else ""
+                }
+
+                else -> {
+                    getString(R.string.response_failed)
+                }
+            }
+        if (message != null) {
+            jobs?.forEach {
+                it.cancel(exception.message.orEmpty(), exception)
+                it.cancelChildren()
+            }
+            viewModel.setErrorText(
+                message
+            )
+        }
     }
 }
 

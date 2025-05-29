@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="title_manage">Verwalten</string>
+    <string name="title_search">Suchen</string>
     <string name="title_settings">Einstellungen</string>
     <string name="title_statistics">Statistiken</string>
     <string name="license">Lizenz</string>
@@ -42,4 +42,9 @@
     <string name="no">Nein</string>
     <string name="title_playlist_details">Wiedergabeliste Details</string>
     <string name="error_no_entries">Keine Einträge</string>
+    <string name="label_type">Typ:</string>
+    <string name="search_hint">Suche nach Lieder, Künstler oder Alben</string>
+    <string name="unknown">Unbekannt</string>
+    <string name="song">Lied</string>
+    <string name="artist">Künstler</string>
 </resources>

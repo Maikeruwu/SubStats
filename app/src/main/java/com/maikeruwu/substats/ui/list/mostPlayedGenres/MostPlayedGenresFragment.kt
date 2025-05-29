@@ -13,6 +13,7 @@ import com.maikeruwu.substats.service.SubsonicApiProvider
 import com.maikeruwu.substats.service.assertServicesAvailable
 import com.maikeruwu.substats.service.endpoint.SubsonicBrowsingService
 import com.maikeruwu.substats.service.endpoint.SubsonicSongListService
+import com.maikeruwu.substats.service.getHandler
 import com.maikeruwu.substats.ui.list.AbstractListFragment
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch

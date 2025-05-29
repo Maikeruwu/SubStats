@@ -20,7 +20,9 @@ class GenreSongListAdapter(
         holder.lastPlayed.text =
             pair.value.maxByOrNull { it.played ?: LocalDateTime.MIN }?.played?.formatDate()
                 ?: neverString
-        holder.coverArt.loadCoverArt(pair.value.firstOrNull()?.coverArt.orEmpty())
+        pair.value.firstOrNull()?.coverArt?.let {
+            holder.coverArt.loadCoverArt(it)
+        }
     }
 
     override fun getItemCount(): Int {

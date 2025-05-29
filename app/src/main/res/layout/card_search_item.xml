@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="105dp"
+        android:id="@+id/cardItem">
+
+    <TextView
+            android:layout_width="260dp"
+            android:id="@+id/name"
+            android:textSize="16sp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:maxLines="1"
+            android:layout_marginTop="30dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold" />
+
+    <TextView
+            android:id="@+id/textType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/name"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="20dp"
+            android:gravity="center"
+            android:text="@string/label_type"
+            android:textSize="16sp" />
+
+    <TextView
+            android:id="@+id/valueType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/name"
+            android:layout_toEndOf="@id/textType"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="5dp"
+            android:gravity="center"
+            android:textSize="16sp" />
+
+    <ImageView
+            android:id="@+id/coverArt"
+            android:layout_width="95dp"
+            android:layout_height="95dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="20dp"
+            android:contentDescription="@string/cover_art"
+            app:srcCompat="@drawable/outline_music_note_95" />
+
+    <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+
+</RelativeLayout>

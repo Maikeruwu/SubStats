@@ -15,6 +15,6 @@ class MostPlayedAlbumsViewModel : AbstractListViewModel() {
         val currentList = _albums.value?.toMutableList() ?: mutableListOf()
         currentList.add(album)
         _albums.value = currentList
-            .sortedByDescending { it.song?.sumOf { song -> song.playCount } }.toList()
+            .sortedByDescending { it.song?.sumOf { song -> song.playCount } }
     }
 }
